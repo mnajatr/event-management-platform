@@ -1,0 +1,251 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum UserRole {
+  CUSTOMER
+  ORGANIZER
+}
+
+enum EventCategory {
+  MUSIC
+  SPORTS
+  TECHNOLOGY
+  BUSINESS
+  EDUCATION
+  ENTERTAINMENT
+  FOOD
+  HEALTH
+  ART
+  OTHER
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum TransactionStatus {
+  PENDING
+  WAITING_PAYMENT
+  PAID
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}
+
+enum PointHistoryType {
+  EARNED
+  USED
+  EXPIRED
+}
+
+enum PointSource {
+  REFERRAL
+  TRANSACTION
+  BONUS
+  EVENT_ATTENDANCE
+}
+
+enum AttendeeStatus {
+  REGISTERED
+  ATTENDED
+  NO_SHOW
+  CANCELLED
+}
+
+// ==================== MODELS ====================
+
+/// Menyimpan data pengguna aplikasi, bisa sebagai customer atau organizer.
+model User {
+  id             Int      @id @default(autoincrement()) // Primary key
+  email          String   @unique // Email unik
+  password       String // Password terenkripsi
+  fullName       String // Nama lengkap user
+  profilePicture String? // Link gambar profil (opsional)
+  role           UserRole @default(CUSTOMER) // Peran pengguna (enum)
+  referralCode   String   @unique // Kode referral unik
+  referralBy     Int? // ID user yang mereferensikan (opsional)
+  pointsBalance  Int      @default(0) // Saldo poin user
+  createdAt      DateTime @default(now()) // Tanggal pembuatan
+  updatedAt      DateTime @updatedAt // Tanggal update terakhir
+
+  // Relasi internal (referral)
+  referrer  User?  @relation("UserReferral", fields: [referralBy], references: [id])
+  referrals User[] @relation("UserReferral")
+
+  // Relasi eksternal
+  organizedEvents Event[]         @relation("EventOrganizer") // Event yang dibuat user
+  transactions    Transaction[]   @relation("CustomerTransaction") // Transaksi user
+  coupons         Coupon[] // Kupon milik user
+  pointHistories  PointHistory[] // Riwayat poin
+  reviews         Review[] // Review yang ditulis user
+  eventAttendees  EventAttendee[] // Kehadiran user di event
+  vouchers        Voucher[]       @relation("VoucherOrganizer") // Voucher yang dibuat
+}
+
+/// Menyimpan informasi tentang event yang dibuat oleh organizer.
+model Event {
+  id             Int           @id @default(autoincrement())
+  organizerId    Int // ID penyelenggara (user)
+  name           String // Nama event
+  description    String        @db.Text // Deskripsi panjang
+  category       EventCategory // Kategori event (enum)
+  location       String // Lokasi fisik event
+  startDate      DateTime // Tanggal mulai
+  endDate        DateTime // Tanggal berakhir
+  basePrice      Int // Harga dasar tiket
+  totalseats     Int // Total kursi tersedia
+  availableSeats Int // Kursi yang belum terisi
+  isFree         Boolean       @default(false) // Apakah event gratis?
+  status         EventStatus   @default(DRAFT) // Status publikasi event
+  imageUrl       String? // Gambar event (opsional)
+  createdAt      DateTime      @default(now()) // Tanggal dibuat
+  updatedAt      DateTime      @updatedAt // Tanggal diperbarui
+
+  // Relasi
+  organizer      User            @relation("EventOrganizer", fields: [organizerId], references: [id])
+  ticketTypes    TicketType[] // Jenis-jenis tiket
+  transactions   Transaction[] // Transaksi pembelian tiket
+  vouchers       Voucher[] // Voucher terkait event
+  reviews        Review[] // Ulasan dari peserta
+  eventAttendees EventAttendee[] // Kehadiran peserta
+}
+
+/// Menyimpan jenis tiket yang tersedia untuk event.
+model TicketType {
+  id        Int      @id @default(autoincrement())
+  eventId   Int // Event terkait
+  name      String // Nama jenis tiket
+  price     Int // Harga tiket
+  quantity  Int // Kuantitas tersedia
+  createdAt DateTime @default(now()) // Tanggal dibuat
+
+  event        Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  transactions Transaction[] // Transaksi menggunakan jenis tiket ini
+}
+
+/// Menyimpan data transaksi pembelian tiket oleh user.
+model Transaction {
+  id                   Int               @id @default(autoincrement())
+  customerId           Int // ID user pembeli
+  eventId              Int // Event terkait
+  ticketTypeId         Int // Jenis tiket
+  voucherId            Int? // Voucher yang digunakan
+  couponId             Int? // Kupon yang digunakan
+  quantity             Int // Jumlah tiket
+  baseAmount           Int // Harga sebelum diskon
+  pointUsed            Int               @default(0) // Poin yang digunakan
+  voucherDiscount      Int               @default(0) // Potongan dari voucher
+  couponDiscount       Int               @default(0) // Potongan dari kupon
+  finalAmount          Int // Total yang dibayar
+  status               TransactionStatus @default(PENDING) // Status transaksi
+  paymentProof         String? // Bukti pembayaran (opsional)
+  paymentDeadline      DateTime? // Batas waktu bayar
+  confirmationDeadline DateTime? // Batas konfirmasi
+  createdAt            DateTime          @default(now()) // Dibuat pada
+  updatedAt            DateTime          @updatedAt // Diperbarui pada
+
+  customer       User           @relation("CustomerTransaction", fields: [customerId], references: [id])
+  event          Event          @relation(fields: [eventId], references: [id])
+  ticketType     TicketType     @relation(fields: [ticketTypeId], references: [id])
+  voucher        Voucher?       @relation(fields: [voucherId], references: [id])
+  coupon         Coupon?        @relation(fields: [couponId], references: [id])
+  pointHistories PointHistory[] // Riwayat poin dari transaksi ini
+  reviews        Review[] // Review dari transaksi
+}
+
+/// Menyimpan voucher yang dibuat oleh organizer untuk memberi diskon di event tertentu.
+model Voucher {
+  id            Int      @id @default(autoincrement())
+  eventId       Int // Event yang terkait
+  organizerId   Int // Pembuat voucher
+  voucherCode   String   @unique // Kode unik
+  discountValue Int // Nilai diskon
+  usageLimit    Int // Batas pemakaian
+  usedCount     Int      @default(0) // Sudah digunakan berapa kali
+  startDate     DateTime // Mulai berlaku
+  endDate       DateTime // Berakhir
+  isActive      Boolean  @default(true) // Apakah aktif
+  createdAt     DateTime @default(now()) // Dibuat
+
+  event        Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  organizer    User          @relation("VoucherOrganizer", fields: [organizerId], references: [id])
+  transactions Transaction[] // Digunakan di transaksi
+}
+
+/// Menyimpan kupon personal milik user yang bisa digunakan sekali.
+model Coupon {
+  id            Int       @id @default(autoincrement())
+  userId        Int // Pemilik kupon
+  couponCode    String    @unique // Kode unik
+  discountValue Int // Nilai diskon
+  isUsed        Boolean   @default(false) // Apakah sudah digunakan
+  usedAt        DateTime? // Tanggal digunakan
+  expiresAt     DateTime // Tanggal kadaluarsa
+  createdAt     DateTime  @default(now()) // Dibuat
+
+  user         User          @relation(fields: [userId], references: [id])
+  transactions Transaction[] // Transaksi yang menggunakan kupon ini
+}
+
+/// Menyimpan riwayat perubahan poin user (dari referral, pembelian, dll).
+model PointHistory {
+  id            Int              @id @default(autoincrement())
+  userId        Int // Pemilik poin
+  transactionId Int? // Transaksi terkait (jika ada)
+  pointsAmount  Int // Jumlah poin
+  type          PointHistoryType // Jenis: EARNED, USED, EXPIRED
+  source        PointSource // Sumber: REFERRAL, TRANSACTION, dll
+  description   String // Keterangan
+  expiresAt     DateTime? // Kadaluwarsa (jika ada)
+  createdAt     DateTime         @default(now()) // Dibuat
+
+  user        User         @relation(fields: [userId], references: [id])
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+}
+
+/// Menyimpan review dari user terhadap event yang sudah diikuti.
+model Review {
+  id            Int      @id @default(autoincrement())
+  eventId       Int // Event yang diulas
+  customerId    Int // ID user pemberi review
+  transactionId Int // Transaksi terkait review
+  rating        Int      @db.SmallInt // Rating 1-5
+  reviewText    String?  @db.Text // Teks review
+  createdAt     DateTime @default(now()) // Dibuat
+  updatedAt     DateTime @updatedAt // Diubah
+
+  event       Event       @relation(fields: [eventId], references: [id])
+  customer    User        @relation(fields: [customerId], references: [id])
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+
+  @@unique([transactionId]) // Satu review hanya bisa dibuat untuk satu transaksi
+}
+
+/// Menyimpan kehadiran user pada event.
+/// Cocok untuk mendeteksi siapa saja yang benar-benar hadir.
+model EventAttendee {
+  id             Int            @id @default(autoincrement())
+  eventId        Int // Event yang dihadiri
+  userId         Int // User yang hadir
+  ticketQuantity Int // Jumlah tiket yang digunakan
+  totalPricePaid Int // Total harga dibayar
+  status         AttendeeStatus @default(REGISTERED) // Status: HADIR, TIDAK HADIR, DSB
+
+  event Event @relation(fields: [eventId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@unique([eventId, userId]) // Satu user satu record per event
+}
