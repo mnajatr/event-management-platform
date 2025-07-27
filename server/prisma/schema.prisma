@@ -106,7 +106,7 @@ model Event {
   startDate      DateTime // Tanggal mulai
   endDate        DateTime // Tanggal berakhir
   basePrice      Int // Harga dasar tiket
-  totalseats     Int // Total kursi tersedia
+  totalSeats     Int // Total kursi tersedia
   availableSeats Int // Kursi yang belum terisi
   isFree         Boolean       @default(false) // Apakah event gratis?
   status         EventStatus   @default(DRAFT) // Status publikasi event
