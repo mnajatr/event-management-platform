@@ -2,6 +2,8 @@ import express, { Application, Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { ZodError } from "zod";
 import eventRoutes from "./routes/event.routes";
+import { HttpException } from "./exceptions/http.exception";
+import logger from "./utils/logger";
 
 class App {
   public app: Application;
@@ -16,6 +18,10 @@ class App {
   private initializeMiddlewares(): void {
     this.app.use(cors());
     this.app.use(express.json());
+    this.app.use((req: Request, res: Response, next: NextFunction) => {
+      logger.info(`${req.method} ${req.originalUrl}`);
+      next();
+    });
   }
 
   private initializeRoutes(): void {
