@@ -16,7 +16,10 @@ class App {
   }
 
   private initializeMiddlewares(): void {
-    this.app.use(cors());
+    const corsOptions = {
+      origin: "http://localhost:3000",
+    };
+    this.app.use(cors(corsOptions));
     this.app.use(express.json());
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       logger.info(`${req.method} ${req.originalUrl}`);
