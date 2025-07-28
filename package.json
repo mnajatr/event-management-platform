@@ -1,11 +1,13 @@
 {
-  "name": "event-management-platform",
+  "name": "event-management-platform-monorepo",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently \"npm run dev -w server\" \"npm run dev -w client\""
   },
   "keywords": [],
   "author": "",
