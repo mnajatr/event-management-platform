@@ -23,24 +23,29 @@ const categories = [
 ];
 
 interface EventFiltersProps {
-  setSearchTerm: (term: string) => void;
-  setSelectedCategory: (category: string) => void;
+  initialSearch: string;
+  initialCategory: string;
+  onSearchChange: (term: string) => void;
+  onCategoryChange: (category: string) => void;
 }
 
 export const EventFilters = ({
-  setSearchTerm,
-  setSelectedCategory,
+  initialSearch,
+  initialCategory,
+  onSearchChange,
+  onCategoryChange,
 }: EventFiltersProps) => {
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-8">
       <Input
         placeholder="Cari nama event..."
-        onChange={(e) => setSearchTerm(e.target.value)}
+        defaultValue={initialSearch}
+        onChange={(e) => onSearchChange(e.target.value)}
         className="md:w-1/2"
       />
       <Select
         onValueChange={(value) =>
-          setSelectedCategory(value === "all" ? "" : value)
+          onCategoryChange(value === "all" ? "" : value)
         }
       >
         <SelectTrigger className="md:w-1/2">
