@@ -3,9 +3,18 @@ import { TEvent, TEventDetail } from "@/types/event.type";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
-export const getEvents = async (): Promise<TEvent[]> => {
+interface IGetEventsParams {
+  category?: string;
+  search?: string;
+}
+
+export const getEvents = async (
+  params: IGetEventsParams
+): Promise<TEvent[]> => {
   try {
-    const response = await axios.get<{ data: TEvent[] }>(`${API_URL}/events`);
+    const response = await axios.get<{ data: TEvent[] }>(`${API_URL}/events`, {
+      params,
+    });
     return response.data.data;
   } catch (error) {
     console.error("Error fetching events:", error);
