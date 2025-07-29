@@ -75,11 +75,7 @@ async function main() {
           totalSeats: totalSeats,
           availableSeats: totalSeats,
           status: EventStatus.PUBLISHED,
-          imageUrl: faker.image.urlLoremFlickr({
-            category: "concert",
-            width: 1280,
-            height: 720,
-          }),
+          imageUrl: `https://picsum.photos/1280/720?random=${faker.number.int({ min: 1, max: 1000 })}`,
         },
       });
 
