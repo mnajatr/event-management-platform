@@ -15,3 +15,19 @@ export type TEvent = {
   imageUrl: string | null; // URL to the event image, can be null if no image is provided
   organizer: TOrganizer;
 };
+
+export type TTicketType = {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+};
+
+export type TEventDetail = TEvent & {
+  ticketsTypes: TTicketType[];
+  organizer: {
+    id: number;
+    fullName: string;
+    email: string;
+  };
+};
