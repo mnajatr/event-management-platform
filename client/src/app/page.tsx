@@ -1,51 +1,20 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
 import { getEvents } from "@/lib/api/events";
-import { EventList } from "@/components/events/EventList";
-import { EventFilters } from "@/components/events/EventFilters";
-import { useDebounce } from "@/hooks/useDebounce";
+import { EventBrowser } from "@/components/events/EventBrowser";
 
-export default function HomePage() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+// TAMBAHKAN BARIS INI
+export const dynamic = "force-dynamic";
 
-  const [searchTerm, setSearchTerm] = useState(
-    searchParams.get("search") || ""
-  );
-  const [selectedCategory, setSelectedCategory] = useState(
-    searchParams.get("category") || ""
-  );
+interface HomePageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
 
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const params = await searchParams;
 
-  const {
-    data: events,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["events", debouncedSearchTerm, selectedCategory],
-    queryFn: () =>
-      getEvents({ search: debouncedSearchTerm, category: selectedCategory }),
-    placeholderData: (previousData) => previousData,
-  });
+  const search = typeof params.search === "string" ? params.search : "";
+  const category = typeof params.category === "string" ? params.category : "";
 
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (debouncedSearchTerm) {
-      params.set("search", debouncedSearchTerm);
-    }
-
-    if (selectedCategory) {
-      params.set("category", selectedCategory);
-    }
-
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [debouncedSearchTerm, selectedCategory, pathname, router]);
+  const initialEvents = await getEvents({ search, category });
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -56,16 +25,7 @@ export default function HomePage() {
         Jelajahi berbagai event seru di sekitar Anda.
       </p>
 
-      <EventFilters
-        setSearchTerm={setSearchTerm}
-        setSelectedCategory={setSelectedCategory}
-      />
-
-      {isLoading && <div className="text-center">Mencari event... ⏳</div>}
-      {isError && (
-        <div className="text-center text-red-500">Error: {error.message}</div>
-      )}
-      {!isLoading && !isError && <EventList events={events} />}
+      <EventBrowser initialEvents={initialEvents} />
     </main>
   );
 }
