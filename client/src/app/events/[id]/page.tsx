@@ -9,7 +9,6 @@ import dayjs from "dayjs";
 
 export default function EventDetailPage() {
   const params = useParams();
-  // Pastikan ID adalah string, atau null jika tidak ada
   const eventId = typeof params.id === "string" ? Number(params.id) : null;
 
   const {
@@ -18,9 +17,7 @@ export default function EventDetailPage() {
     isError,
     error,
   } = useQuery({
-    // queryKey dibuat dinamis berdasarkan eventId
     queryKey: ["event", eventId],
-    // panggil API hanya jika eventId valid (bukan null)
     queryFn: () => getEventById(eventId!),
     enabled: eventId !== null,
   });
@@ -35,7 +32,7 @@ export default function EventDetailPage() {
     );
   if (!event) return <div className="text-center p-10">Event not found.</div>;
 
-  const imageUrl = event.imageUrl || "/placeholder-image.jpg";
+  const imageUrl = event.imageUrl || "/placeholder-image.svg";
 
   return (
     <div className="container mx-auto px-4 py-8">
