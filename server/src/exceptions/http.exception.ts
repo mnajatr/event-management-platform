@@ -6,5 +6,7 @@ export class HttpException extends Error {
     super(message);
     this.statusCode = statusCode;
     this.message = message;
+
+    // Object.setPrototypeOf(this, HttpException.prototype)
   }
 }
