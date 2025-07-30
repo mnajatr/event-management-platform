@@ -140,3 +140,14 @@
 2025-07-29 20:08:17 info: GET /api/events?search=&category=MUSIC
 2025-07-29 20:08:22 info: GET /api/events?search=&category=MUSIC
 2025-07-29 20:09:07 info: GET /api/events?search=&category=MUSIC
+2025-07-29 21:10:33 info: POST /api/auth/register
+2025-07-29 21:13:55 info: POST /api/auth/register
+2025-07-29 21:16:22 info: POST /api/auth/register
+2025-07-29 21:17:30 info: POST /api/auth/register
+2025-07-29 21:19:05 info: POST /api/auth/register
+2025-07-29 21:19:28 info: POST /api/auth/register
+2025-07-29 21:19:47 info: POST /api/auth/register
+2025-07-29 22:26:45 info: POST /api/auth/register
+2025-07-29 22:26:57 info: POST /api/auth/register
+2025-07-29 22:26:59 info: POST /api/auth/register
+2025-07-29 22:27:10 info: POST /api/auth/register

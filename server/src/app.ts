@@ -2,6 +2,7 @@ import express, { Application, Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { ZodError } from "zod";
 import eventRoutes from "./routes/event.routes";
+import authRoutes from "./routes/auth.routes";
 import { HttpException } from "./exceptions/http.exception";
 import logger from "./utils/logger";
 
@@ -29,6 +30,7 @@ class App {
 
   private initializeRoutes(): void {
     this.app.use("/api/events", eventRoutes);
+    this.app.use("/api/auth", authRoutes)
   }
 
   private initializeErrorHandling(): void {
@@ -39,6 +41,10 @@ class App {
             message: "Validation error",
             errors: err.issues,
           });
+        }
+
+        if (err instanceof HttpException) {
+          return res.status(err.statusCode).json({message: err.message})
         }
         if (err instanceof Error) {
           res.status(500).json({
