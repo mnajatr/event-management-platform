@@ -1,21 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import {
-  createEventSchema,
-  TCreateEventSchema,
-  TCreateEventPayload,
-} from "@/lib/validators/createEvent.schema";
-import { createEvent } from "@/lib/api/events";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -24,11 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -37,19 +18,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-
-const categories = [
-  "MUSIC",
-  "SPORTS",
-  "TECHNOLOGY",
-  "BUSINESS",
-  "EDUCATION",
-  "ENTERTAINMENT",
-  "FOOD",
-  "HEALTH",
-  "ART",
-  "OTHER",
-] as const;
+import { eventCategories } from "@/constants/event";
+import { createEvent } from "@/lib/api/events";
+import {
+  createEventSchema,
+  TCreateEventPayload,
+  TCreateEventSchema,
+} from "@/lib/validators/createEvent.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { DatePickerFormField } from "./DatePickerFormField";
 
 export const CreateEventForm = () => {
   const router = useRouter();
@@ -115,7 +95,7 @@ export const CreateEventForm = () => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {categories.map((item) => (
+                  {eventCategories.map((item) => (
                     <SelectItem key={item} value={item}>
                       {item.charAt(0).toUpperCase() +
                         item.slice(1).toLowerCase()}
@@ -140,82 +120,8 @@ export const CreateEventForm = () => {
           )}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <FormField
-            control={form.control}
-            name="startDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Tanggal Mulai</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pilih tanggal</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      autoFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="endDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Tanggal Berakhir</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pilih tanggal</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      autoFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <DatePickerFormField name="startDate" label="Tanggal Mulai" />
+          <DatePickerFormField name="endDate" label="Tanggal Berakhir" />
         </div>
         <FormField
           control={form.control}
