@@ -1,22 +1,10 @@
 import { z } from "zod";
-
-const categories = [
-  "MUSIC",
-  "SPORTS",
-  "TECHNOLOGY",
-  "BUSINESS",
-  "EDUCATION",
-  "ENTERTAINMENT",
-  "FOOD",
-  "HEALTH",
-  "ART",
-  "OTHER",
-] as const;
+import { eventCategories } from "@/constants/event";
 
 export const createEventSchema = z
   .object({
     name: z.string().min(1, { message: "Nama event tidak boleh kosong." }),
-    category: z.enum(categories),
+    category: z.enum(eventCategories),
     location: z.string().min(1, { message: "Lokasi tidak boleh kosong." }),
     startDate: z.date({
       message: "Tanggal mulai wajib diisi.",
