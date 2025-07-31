@@ -10,5 +10,5 @@ export const registerSchema = z.object({
     .regex(/[0-9]/, "Harus ada angka")
     .regex(/[^a-zA-Z0-9]/, "Harus ada simbol"),
   fullName: z.string().min(3),
-  referralCode: z.string().optional(), // nanti untuk logic referral
+  referralCode: z.string().optional(), 
 });

@@ -1,15 +1,85 @@
 import { Request, Response, NextFunction } from "express";
-import { registerService } from "../services/auth.service";
+import { AuthService } from "../services/auth.service";
+// import { AuthenticatedRequest } from "../middlewares/auth.middleware";
+import { AppError } from "../errors/app.error";
 
-export const register = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const result = await registerService(req.body);
-    res.status(201).json(result);
-  } catch (err) {
-    next(err);
+const authService = new AuthService();
+
+export class AuthController {
+  async register(request: Request, response: Response, next: NextFunction) {
+    try {
+      const { fullName, email, password, profilePicture, role, referralCode } =
+        request.body;
+
+      const result = await authService.registerUser({
+        fullName,
+        email,
+        password,
+        profilePicture,
+        role,
+        referralCode,
+      });
+
+      response.status(201).json({
+        success: true,
+        message: "User registered successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
-};
+
+  async login(request: Request, response: Response, next: NextFunction) {
+    try {
+      const { email, password } = request.body;
+
+      const result = await authService.loginUser({ email, password });
+
+      response.status(200).json({
+        success: true,
+        message: "Login successful",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getProfile(request: Request, response: Response, next: NextFunction) {
+    try {
+      if (!request.user) {
+        throw new AppError("Please register first");
+      }
+
+      const user = await authService.getUserById(request.user.id);
+
+      response.status(200).json({
+        success: true,
+        message: "Profile retrieved successfully",
+        data: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async requestPasswordReset(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { email } = request.body;
+
+      await authService.requestPasswordReset(email);
+
+      response.status(200).json({
+        success: true,
+        message: "Password reset email sent",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+}
