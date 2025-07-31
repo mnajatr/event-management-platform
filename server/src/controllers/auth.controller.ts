@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthService } from "../services/auth.service";
-// import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { AppError } from "../errors/app.error";
 
 const authService = new AuthService();
 
 export class AuthController {
+  // Register umum (tetap dipakai jika perlu)
   async register(request: Request, response: Response, next: NextFunction) {
     try {
       const { fullName, email, password, profilePicture, role, referralCode } =
@@ -23,6 +23,62 @@ export class AuthController {
       response.status(201).json({
         success: true,
         message: "User registered successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async registerCustomer(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { fullName, email, password, profilePicture, referralCode } =
+        request.body;
+
+      const result = await authService.registerUser({
+        fullName,
+        email,
+        password,
+        profilePicture,
+        role: "CUSTOMER",
+        referralCode,
+      });
+
+      response.status(201).json({
+        success: true,
+        message: "Customer registered successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async registerOrganizer(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { fullName, email, password, profilePicture, referralCode } =
+        request.body;
+
+      const result = await authService.registerUser({
+        fullName,
+        email,
+        password,
+        profilePicture,
+        role: "ORGANIZER",
+        referralCode,
+      });
+
+      response.status(201).json({
+        success: true,
+        message: "Organizer registered successfully",
         data: result,
       });
     } catch (error) {

@@ -11,4 +11,6 @@ export const registerSchema = z.object({
     .regex(/[^a-zA-Z0-9]/, "Harus ada simbol"),
   fullName: z.string().min(3),
   referralCode: z.string().optional(), 
+  role: z.enum(["CUSTOMER", "ORGANIZER"]).optional()
+
 });

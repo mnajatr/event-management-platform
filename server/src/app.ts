@@ -3,7 +3,7 @@ import cors from "cors";
 import { ZodError } from "zod";
 import eventRoutes from "./routes/event.routes";
 import authRoutes from "./routes/auth.routes";
-
+// import { HttpException } from "./exceptions/http.exception";
 import logger from "./utils/logger";
 
 class App {
@@ -43,7 +43,9 @@ class App {
           });
         }
 
-
+        // if (err instanceof HttpException) {
+        //   return res.status(err.statusCode).json({message: err.message})
+        // }
         if (err instanceof Error) {
           res.status(500).json({
             message: "Internal Server Error",
