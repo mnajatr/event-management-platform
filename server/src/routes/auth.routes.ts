@@ -1,8 +1,18 @@
 import express from "express";
-import { register } from "../controllers/auth.controller"; // sesuaikan path
+import { AuthController } from "../controllers/auth.controller";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
 const router = express.Router();
+const authController = new AuthController();
 
-router.post("/register", register);
+// Public routes
+router.post("/register", authController.register);
+router.post("/login", authController.login);
+router.post("/forgot-password", authController.requestPasswordReset);
+
+// Protected routes
+// router.get("/profile", authMiddleware, authController.getProfile);
+router.get( "/profile", authMiddleware as unknown as express.RequestHandler, authController.getProfile);
+
 
 export default router;

@@ -4,6 +4,8 @@ import { ZodError } from "zod";
 import eventRoutes from "./routes/event.routes";
 import authRoutes from "./routes/auth.routes";
 import { HttpException } from "./exceptions/http.exception";
+import { notFoundMiddleware } from "./middlewares/not-found.middleware";
+import { errorMiddleware } from "./middlewares/error.middleware";
 import logger from "./utils/logger";
 
 class App {
@@ -29,11 +31,26 @@ class App {
   }
 
   private initializeRoutes(): void {
+    // Health check route
+    this.app.get("/api/health", (req: Request, res: Response) => {
+      res.status(200).json({
+        success: true,
+        message: "API is running",
+        uptime: `${process.uptime().toFixed(2)} seconds`,
+        timestamp: new Date().toISOString(),
+      });
+    });
+
+    // API Routes
     this.app.use("/api/events", eventRoutes);
-    this.app.use("/api/auth", authRoutes)
+    this.app.use("/api/auth", authRoutes);
+
+    // Handle 404 - Must be AFTER all routes
+    this.app.use(notFoundMiddleware);
   }
 
   private initializeErrorHandling(): void {
+    // Use your existing error handling + our errorMiddleware as fallback
     this.app.use(
       (err: Error, req: Request, res: Response, next: NextFunction) => {
         if (err instanceof ZodError) {
@@ -46,13 +63,9 @@ class App {
         if (err instanceof HttpException) {
           return res.status(err.statusCode).json({message: err.message})
         }
-        if (err instanceof Error) {
-          res.status(500).json({
-            message: "Internal Server Error",
-            err: err.message,
-          });
-        }
-        res.status(500).json({ message: "An unexpected error occurred" });
+
+        // Use our errorMiddleware for other errors (including AppError)
+        errorMiddleware(err, req, res, next);
       }
     );
   }
