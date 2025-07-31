@@ -1,4 +1,4 @@
-import prisma  from "../prisma";
+import prisma from "../prisma";
 import { AppError } from "../errors/app.error";
 import { HashUtil } from "../utils/hash";
 import { JWTUtil } from "../utils/jwt";
@@ -9,8 +9,11 @@ import { CreateUserInput, LoginInput, UserResponse } from "../types/user.type";
 export class AuthService {
   private referralService = new ReferralService();
 
-  async registerUser(input: CreateUserInput): Promise<{ user: UserResponse; token: string }> {
-    const { fullName, email, password, profilePicture, role, referralCode } = input;
+  async registerUser(
+    input: CreateUserInput
+  ): Promise<{ user: UserResponse; token: string }> {
+    const { fullName, email, password, profilePicture, role, referralCode } =
+      input;
 
     // Check if email already exists
     const existingUser = await prisma.user.findUnique({
@@ -21,8 +24,17 @@ export class AuthService {
       throw new AppError("Email already registered", 400);
     }
 
+    // Validate role
+    const normalizedRole = role || "CUSTOMER";
+    if (!["CUSTOMER", "ORGANIZER"].includes(normalizedRole)) {
+      throw new AppError("Invalid role. Must be CUSTOMER or ORGANIZER.", 400);
+    }
+
     // Validate referral code if provided
-    if (referralCode && !(await this.referralService.validateReferralCode(referralCode))) {
+    if (
+      referralCode &&
+      !(await this.referralService.validateReferralCode(referralCode))
+    ) {
       throw new AppError("Invalid referral code", 400);
     }
 
@@ -33,7 +45,11 @@ export class AuthService {
     let userReferralCode: string;
     do {
       userReferralCode = generateReferralCode(fullName);
-    } while (await prisma.user.findUnique({ where: { referralCode: userReferralCode } }));
+    } while (
+      await prisma.user.findUnique({
+        where: { referralCode: userReferralCode },
+      })
+    );
 
     // Create user
     const user = await prisma.user.create({
@@ -42,10 +58,10 @@ export class AuthService {
         email,
         password: hashedPassword,
         profilePicture,
-        role: role || 'CUSTOMER',
+        role: normalizedRole,
         referralCode: userReferralCode,
-        referralBy: referralCode 
-          ? (await prisma.user.findUnique({ where: { referralCode } }))?.id 
+        referralBy: referralCode
+          ? (await prisma.user.findUnique({ where: { referralCode } }))?.id
           : undefined,
       },
     });
@@ -62,22 +78,12 @@ export class AuthService {
       role: user.role,
     });
 
-    // Return user without password
-    const userResponse: UserResponse = {
-      id: user.id,
-      email: user.email,
-      fullName: user.fullName,
-      profilePicture: user.profilePicture,
-      role: user.role,
-      referralCode: user.referralCode,
-      pointsBalance: user.pointsBalance,
-      createdAt: user.createdAt,
-    };
-
-    return { user: userResponse, token };
+    return { user: this.toUserResponse(user), token };
   }
 
-  async loginUser(input: LoginInput): Promise<{ user: UserResponse; token: string }> {
+  async loginUser(
+    input: LoginInput
+  ): Promise<{ user: UserResponse; token: string }> {
     const { email, password } = input;
 
     // Find user by email
@@ -90,7 +96,10 @@ export class AuthService {
     }
 
     // Verify password
-    const isPasswordValid = await HashUtil.comparePassword(password, user.password);
+    const isPasswordValid = await HashUtil.comparePassword(
+      password,
+      user.password
+    );
     if (!isPasswordValid) {
       throw new AppError("Invalid email or password", 401);
     }
@@ -102,19 +111,7 @@ export class AuthService {
       role: user.role,
     });
 
-    // Return user without password
-    const userResponse: UserResponse = {
-      id: user.id,
-      email: user.email,
-      fullName: user.fullName,
-      profilePicture: user.profilePicture,
-      role: user.role,
-      referralCode: user.referralCode,
-      pointsBalance: user.pointsBalance,
-      createdAt: user.createdAt,
-    };
-
-    return { user: userResponse, token };
+    return { user: this.toUserResponse(user), token };
   }
 
   async getUserById(id: number): Promise<UserResponse> {
@@ -126,16 +123,7 @@ export class AuthService {
       throw new AppError("User not found", 404);
     }
 
-    return {
-      id: user.id,
-      email: user.email,
-      fullName: user.fullName,
-      profilePicture: user.profilePicture,
-      role: user.role,
-      referralCode: user.referralCode,
-      pointsBalance: user.pointsBalance,
-      createdAt: user.createdAt,
-    };
+    return this.toUserResponse(user);
   }
 
   async requestPasswordReset(email: string): Promise<void> {
@@ -148,7 +136,20 @@ export class AuthService {
     }
 
     // TODO: Implement email sending logic
-    // For now, just log that password reset was requested
     console.log(`Password reset requested for ${email}`);
+  }
+
+  // DRY: Private reusable helper
+  private toUserResponse(user: any): UserResponse {
+    return {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      profilePicture: user.profilePicture,
+      role: user.role,
+      referralCode: user.referralCode,
+      pointsBalance: user.pointsBalance,
+      createdAt: user.createdAt,
+    };
   }
 }
