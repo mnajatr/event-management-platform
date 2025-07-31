@@ -2,9 +2,12 @@ import prisma  from "../prisma";
 import { AppError } from "../errors/app.error";
 import { HashUtil } from "../utils/hash";
 import { JWTUtil } from "../utils/jwt";
+import { generateReferralCode } from "../utils/generated-code";
+import { ReferralService } from "./referral.service";
 import { CreateUserInput, LoginInput, UserResponse } from "../types/user.type";
 
 export class AuthService {
+  private referralService = new ReferralService();
 
   async registerUser(input: CreateUserInput): Promise<{ user: UserResponse; token: string }> {
     const { fullName, email, password, profilePicture, role, referralCode } = input;
@@ -19,12 +22,18 @@ export class AuthService {
     }
 
     // Validate referral code if provided
-    // if (referralCode && !(await this.referralService.validateReferralCode(referralCode))) {
-    //   throw new AppError("Invalid referral code", 400);
-    // }
+    if (referralCode && !(await this.referralService.validateReferralCode(referralCode))) {
+      throw new AppError("Invalid referral code", 400);
+    }
 
     // Hash password
     const hashedPassword = await HashUtil.hashPassword(password);
+
+    // Generate unique referral code
+    let userReferralCode: string;
+    do {
+      userReferralCode = generateReferralCode(fullName);
+    } while (await prisma.user.findUnique({ where: { referralCode: userReferralCode } }));
 
     // Create user
     const user = await prisma.user.create({
@@ -34,6 +43,7 @@ export class AuthService {
         password: hashedPassword,
         profilePicture,
         role: role || 'CUSTOMER',
+        referralCode: userReferralCode,
         referralBy: referralCode 
           ? (await prisma.user.findUnique({ where: { referralCode } }))?.id 
           : undefined,
@@ -41,9 +51,9 @@ export class AuthService {
     });
 
     // Apply referral benefits if referral code was used
-    // if (referralCode) {
-    //   await this.referralService.applyReferral(referralCode, user.id, fullName);
-    // }
+    if (referralCode) {
+      await this.referralService.applyReferral(referralCode, user.id, fullName);
+    }
 
     // Generate JWT token
     const token = JWTUtil.generateToken({
