@@ -1,43 +1,144 @@
-import prisma from "../prisma";
-import bcrypt from "bcrypt";
-import { registerSchema } from "../validators/auth.validator";
-import { sign } from "jsonwebtoken";
-import { HttpException } from "../exceptions/http.exception";
+import prisma  from "../prisma";
+import { AppError } from "../errors/app.error";
+import { HashUtil } from "../utils/hash";
+import { JWTUtil } from "../utils/jwt";
+import { CreateUserInput, LoginInput, UserResponse } from "../types/user.type";
 
-export const registerService = async (input: unknown) => {
-  const data = registerSchema.parse(input);
+export class AuthService {
 
-  const existingUser = await prisma.user.findUnique({
-    where: { email: data.email },
-  });
-  if (existingUser) throw new HttpException(409, "Email already registered");
+  async registerUser(input: CreateUserInput): Promise<{ user: UserResponse; token: string }> {
+    const { fullName, email, password, profilePicture, role, referralCode } = input;
 
-  const hashedPassword = await bcrypt.hash(data.password, 10);
-  const referralCode = Math.random().toString(36).substring(2, 10);
+    // Check if email already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
 
-  const newUser = await prisma.user.create({
-    data: {
-      email: data.email,
-      password: hashedPassword,
-      fullName: data.fullName,
-      // role: data.role,
-      referralCode,
-    },
-  });
-  const token = sign(
-    { id: newUser.id, role: newUser.role },
-    process.env.JWT_SECRET!,
-    { expiresIn: "1d" }
-  );
+    if (existingUser) {
+      throw new AppError("Email already registered", 400);
+    }
 
-  return {
-    message: "User registered",
-    token,
-    user: {
-      id: newUser.id,
-      email: newUser.email,
-      fullName: newUser.fullName,
-      role: newUser.role,
-    },
-  };
-};
+    // Validate referral code if provided
+    // if (referralCode && !(await this.referralService.validateReferralCode(referralCode))) {
+    //   throw new AppError("Invalid referral code", 400);
+    // }
+
+    // Hash password
+    const hashedPassword = await HashUtil.hashPassword(password);
+
+    // Create user
+    const user = await prisma.user.create({
+      data: {
+        fullName,
+        email,
+        password: hashedPassword,
+        profilePicture,
+        role: role || 'CUSTOMER',
+        referralBy: referralCode 
+          ? (await prisma.user.findUnique({ where: { referralCode } }))?.id 
+          : undefined,
+      },
+    });
+
+    // Apply referral benefits if referral code was used
+    // if (referralCode) {
+    //   await this.referralService.applyReferral(referralCode, user.id, fullName);
+    // }
+
+    // Generate JWT token
+    const token = JWTUtil.generateToken({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    // Return user without password
+    const userResponse: UserResponse = {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      profilePicture: user.profilePicture,
+      role: user.role,
+      referralCode: user.referralCode,
+      pointsBalance: user.pointsBalance,
+      createdAt: user.createdAt,
+    };
+
+    return { user: userResponse, token };
+  }
+
+  async loginUser(input: LoginInput): Promise<{ user: UserResponse; token: string }> {
+    const { email, password } = input;
+
+    // Find user by email
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new AppError("Invalid email or password", 401);
+    }
+
+    // Verify password
+    const isPasswordValid = await HashUtil.comparePassword(password, user.password);
+    if (!isPasswordValid) {
+      throw new AppError("Invalid email or password", 401);
+    }
+
+    // Generate JWT token
+    const token = JWTUtil.generateToken({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    // Return user without password
+    const userResponse: UserResponse = {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      profilePicture: user.profilePicture,
+      role: user.role,
+      referralCode: user.referralCode,
+      pointsBalance: user.pointsBalance,
+      createdAt: user.createdAt,
+    };
+
+    return { user: userResponse, token };
+  }
+
+  async getUserById(id: number): Promise<UserResponse> {
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      profilePicture: user.profilePicture,
+      role: user.role,
+      referralCode: user.referralCode,
+      pointsBalance: user.pointsBalance,
+      createdAt: user.createdAt,
+    };
+  }
+
+  async requestPasswordReset(email: string): Promise<void> {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    // TODO: Implement email sending logic
+    // For now, just log that password reset was requested
+    console.log(`Password reset requested for ${email}`);
+  }
+}
