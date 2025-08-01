@@ -207,3 +207,5 @@
 2025-07-31 13:10:09 info: GET /api/events?search=&category=
 2025-07-31 13:10:10 info: GET /api/events?search=&category=
 2025-07-31 13:10:12 info: GET /api/events?search=&category=
+2025-08-01 10:42:13 info: GET /api/health
+2025-08-01 10:42:14 info: GET /favicon.ico
