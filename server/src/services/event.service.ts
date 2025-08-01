@@ -1,6 +1,6 @@
 import prisma from "../prisma";
 import { Prisma } from "../../src/generated/prisma";
-import { HttpException } from "../exceptions/http.exception";
+import { AppError } from "../errors/app.error";
 
 interface FindEventsQuery {
   category?: string;
@@ -69,7 +69,7 @@ export class EventService {
     });
 
     if (!event) {
-      throw new HttpException(404, "Event not found");
+      throw new AppError("Event not found", 404);
     }
 
     return event;

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { EventService } from "../services/event.service";
 import { createEventSchema } from "../validators/event.validator";
-import { HttpException } from "../exceptions/http.exception";
+import { AppError } from "../errors/app.error";
 
 const eventService = new EventService();
 
@@ -45,12 +45,12 @@ export class EventController {
     try {
       const eventId = parseInt(req.params.id, 10);
       if (isNaN(eventId)) {
-        throw new HttpException(400, "Invalid event ID format");
+        throw new AppError("Invalid event ID format", 400);
       }
 
       const event = await eventService.findEventById(eventId);
       if (!event) {
-        throw new HttpException(404, "Event not found");
+        throw new AppError("Event not found", 404);
       }
 
       res.status(200).json({
