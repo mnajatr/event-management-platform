@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.routes";
 import { notFoundMiddleware } from "./middlewares/not-found.middleware";
 import { errorMiddleware } from "./middlewares/error.middleware";
 import logger from "./utils/logger";
+import voucherRouters from "./routes/voucher.routes";
 
 class App {
   public app: Application;
@@ -43,6 +44,7 @@ class App {
     // API Routes
     this.app.use("/api/events", eventRoutes);
     this.app.use("/api/auth", authRoutes);
+    this.app.use("/api/vouchers", voucherRouters);
 
     // Handle 404 - Must be AFTER all routes
     this.app.use(notFoundMiddleware);
