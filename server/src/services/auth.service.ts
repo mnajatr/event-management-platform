@@ -1,10 +1,11 @@
 import prisma from "../prisma";
+import type { User } from "../generated/prisma";
 import { AppError } from "../errors/app.error";
 import { HashUtil } from "../utils/hash";
 import { JWTUtil } from "../utils/jwt";
 import { generateReferralCode } from "../utils/generated-code";
 import { ReferralService } from "./referral.service";
-import { CreateUserInput, LoginInput, UserResponse } from "../types/user.type";
+import { CreateUserInput, LoginInput, UserResponse } from "../validators/auth.validator";
 
 export class AuthService {
   private referralService = new ReferralService();
@@ -49,7 +50,7 @@ export class AuthService {
       await prisma.user.findUnique({
         where: { referralCode: userReferralCode },
       })
-    );
+    ); 
 
     // Create user
     const user = await prisma.user.create({
@@ -140,7 +141,7 @@ export class AuthService {
   }
 
   // DRY: Private reusable helper
-  private toUserResponse(user: any): UserResponse {
+  private toUserResponse(user: User): UserResponse {
     return {
       id: user.id,
       email: user.email,
