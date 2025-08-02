@@ -264,3 +264,9 @@
 2025-08-02 14:27:31 info: POST /api/auth/register/customer
 2025-08-02 14:29:39 info: POST /api/auth/register/customer
 2025-08-02 14:29:49 info: POST /api/auth/register/customer
+2025-08-02 17:59:11 info: POST /api/vouchers
+2025-08-02 17:59:18 info: POST /api/vouchers
+2025-08-02 17:59:18 error: undefined
+2025-08-02 17:59:34 info: POST /api/vouchers
+2025-08-02 17:59:34 error: undefined
+2025-08-02 18:00:04 info: POST /api/vouchers
