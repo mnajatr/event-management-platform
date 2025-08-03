@@ -513,3 +513,9 @@
 2025-08-03 20:47:04 info: GET /api/events?search=&category=
 2025-08-03 20:47:04 info: GET /api/events?search=&category=
 2025-08-03 20:47:32 info: POST /api/auth/login
+2025-08-03 20:47:33 info: POST /api/auth/login
+2025-08-03 20:47:34 info: GET /api/events?search=&category=
+2025-08-03 20:47:34 info: GET /api/events?search=&category=
+2025-08-03 20:47:34 info: GET /api/events?search=&category=
+2025-08-03 20:47:34 info: GET /api/events?search=&category=
+2025-08-03 20:47:44 info: GET /api/auth/profile
