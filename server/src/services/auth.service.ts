@@ -17,26 +17,16 @@ export class AuthService {
   async registerUser(
     input: CreateUserInput
   ): Promise<{ user: UserResponse; token: string }> {
-    const { fullName, email, password, profilePicture, role, referralCode } =
-      input;
+    const { fullName, email, password, profilePicture, role, referralCode } = input;
 
-    // Check if email already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) throw new AppError("Email already registered", 400);
 
-    if (existingUser) {
-      throw new AppError("Email already registered", 400);
-    }
-
-    // Validate role
     const normalizedRole = role || "CUSTOMER";
     if (!["CUSTOMER", "ORGANIZER"].includes(normalizedRole)) {
       throw new AppError("Invalid role. Must be CUSTOMER or ORGANIZER.", 400);
     }
 
-    // Validate referral code if provided
-    // Validate referral code if provided
     if (
       referralCode &&
       !(await this.referralService.validateReferralCode(referralCode))
@@ -44,20 +34,13 @@ export class AuthService {
       throw new AppError("Invalid referral code", 400);
     }
 
-    // Hash password
     const hashedPassword = await HashUtil.hashPassword(password);
 
-    // Generate unique referral code
     let userReferralCode: string;
     do {
       userReferralCode = generateReferralCode(fullName);
-    } while (
-      await prisma.user.findUnique({
-        where: { referralCode: userReferralCode },
-      })
-    );
+    } while (await prisma.user.findUnique({ where: { referralCode: userReferralCode } }));
 
-    // Create user
     const user = await prisma.user.create({
       data: {
         fullName,
@@ -72,19 +55,20 @@ export class AuthService {
       },
     });
 
-    // Apply referral benefits if referral code was used
     if (referralCode) {
       await this.referralService.applyReferral(referralCode, user.id, fullName);
     }
 
-    // Generate JWT token
     const token = JWTUtil.generateToken({
       id: user.id,
       email: user.email,
       role: user.role,
     });
 
-    return { user: this.toUserResponse(user), token };
+    // include coupons for response
+    const fullUser = await this.getUserById(user.id);
+
+    return { user: fullUser, token };
   }
 
   async loginUser(
@@ -92,61 +76,47 @@ export class AuthService {
   ): Promise<{ user: UserResponse; token: string }> {
     const { email, password } = input;
 
-    // Find user by email
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) throw new AppError("Invalid email or password", 401);
 
-    if (!user) {
-      throw new AppError("Invalid email or password", 401);
-    }
-
-    // Verify password
     const isPasswordValid = await HashUtil.comparePassword(
       password,
       user.password
     );
-    if (!isPasswordValid) {
-      throw new AppError("Invalid email or password", 401);
-    }
+    if (!isPasswordValid) throw new AppError("Invalid email or password", 401);
 
-    // Generate JWT token
     const token = JWTUtil.generateToken({
       id: user.id,
       email: user.email,
       role: user.role,
     });
 
-    return { user: this.toUserResponse(user), token };
+    const fullUser = await this.getUserById(user.id);
+
+    return { user: fullUser, token };
   }
 
   async getUserById(id: number): Promise<UserResponse> {
     const user = await prisma.user.findUnique({
       where: { id },
+      include: {
+        coupons: {
+          select: {
+            id: true,
+            couponCode: true,
+            discountValue: true,
+            expiresAt: true,
+          },
+        },
+      },
     });
 
-    if (!user) {
-      throw new AppError("User not found", 404);
-    }
+    if (!user) throw new AppError("User not found", 404);
 
     return this.toUserResponse(user);
   }
 
-  async requestPasswordReset(email: string): Promise<void> {
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!user) {
-      throw new AppError("User not found", 404);
-    }
-
-    // TODO: Implement email sending logic
-    console.log(`Password reset requested for ${email}`);
-  }
-
-  // DRY: Private reusable helper
-  private toUserResponse(user: User): UserResponse {
+  private toUserResponse(user: User & { coupons?: any[] }): UserResponse {
     return {
       id: user.id,
       email: user.email,
@@ -156,7 +126,15 @@ export class AuthService {
       referralCode: user.referralCode,
       pointsBalance: user.pointsBalance,
       createdAt: user.createdAt,
+      coupons: user.coupons || [],
     };
+  }
+
+  async requestPasswordReset(email: string): Promise<void> {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) throw new AppError("User not found", 404);
+
+    console.log(`Password reset requested for ${email}`);
   }
 
   async updateUserPassword(
@@ -167,16 +145,10 @@ export class AuthService {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new AppError("User not found", 404);
 
-    const isMatch = await HashUtil.comparePassword(
-      currentPassword,
-      user.password
-    );
+    const isMatch = await HashUtil.comparePassword(currentPassword, user.password);
     if (!isMatch) throw new AppError("Current password is incorrect", 400);
 
     const hashedNew = await HashUtil.hashPassword(newPassword);
-    await prisma.user.update({
-      where: { id: userId },
-      data: { password: hashedNew },
-    });
+    await prisma.user.update({ where: { id: userId }, data: { password: hashedNew } });
   }
 }
