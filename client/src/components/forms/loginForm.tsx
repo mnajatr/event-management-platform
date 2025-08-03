@@ -23,7 +23,15 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginInput) => {
     try {
-      await axios.post("http://localhost:8000/api/auth/login", data);
+      const res = await axios.post(
+        "http://localhost:8000/api/auth/login",
+        data
+      );
+
+      const {token, user} = res.data.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
       toast.success("Login success!");
       router.push("/");
     } catch (error) {
@@ -48,7 +56,9 @@ export default function LoginForm() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <Label htmlFor="email" className="mb-2 block">Email</Label>
+          <Label htmlFor="email" className="mb-2 block">
+            Email
+          </Label>
           <Input id="email" type="email" {...register("email")} />
           {errors.email && (
             <p className="text-red-500 text-sm">{errors.email.message}</p>
@@ -58,7 +68,10 @@ export default function LoginForm() {
         <div>
           <div className="flex justify-between items-center mb-1">
             <Label htmlFor="password">Password</Label>
-            <a href="/auth/forgot-password" className="text-sm text-blue-600 hover:underline">
+            <a
+              href="/auth/forgot-password"
+              className="text-sm text-blue-600 hover:underline"
+            >
               Forgot Password?
             </a>
           </div>
@@ -73,7 +86,10 @@ export default function LoginForm() {
         </Button>
 
         <p className="text-center text-sm text-muted-foreground mt-2">
-          Don’t have an account? <a href="/auth/register" className="underline">Sign Up</a>
+          Don’t have an account?{" "}
+          <a href="/auth/register" className="underline">
+            Sign Up
+          </a>
         </p>
       </form>
     </div>
