@@ -41,7 +41,19 @@ export const userResponseSchema = z.object({
   referralCode: z.string(),
   pointsBalance: z.number(),
   createdAt: z.date(),
+
+  coupons: z
+    .array(
+      z.object({
+        id: z.number(),
+        couponCode: z.string(),
+        discountValue: z.number(),
+        expiresAt: z.date(), // gunakan z.date() kalau kamu parse ke Date di backend
+      })
+    )
+    .optional(),
 });
+
 
 // PASSWORD RESET
 export const passwordResetSchema = z.object({

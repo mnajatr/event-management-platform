@@ -436,3 +436,80 @@
 2025-08-03 17:19:28 info: POST /api/auth/register
 2025-08-03 17:19:28 error: undefined
 2025-08-03 17:19:34 info: POST /api/auth/register
+2025-08-03 18:18:52 info: POST /api/auth/login
+2025-08-03 18:18:53 error: undefined
+2025-08-03 18:18:55 info: POST /api/auth/login
+2025-08-03 18:18:55 error: undefined
+2025-08-03 18:19:03 info: POST /api/auth/login
+2025-08-03 18:19:03 error: undefined
+2025-08-03 18:19:03 info: POST /api/auth/login
+2025-08-03 18:19:03 error: undefined
+2025-08-03 18:19:03 info: POST /api/auth/login
+2025-08-03 18:19:03 error: undefined
+2025-08-03 18:19:04 info: POST /api/auth/login
+2025-08-03 18:19:04 error: undefined
+2025-08-03 18:19:04 info: POST /api/auth/login
+2025-08-03 18:19:04 error: undefined
+2025-08-03 18:19:23 info: POST /api/auth/login
+2025-08-03 18:19:23 error: undefined
+2025-08-03 18:19:24 info: POST /api/auth/login
+2025-08-03 18:19:24 error: undefined
+2025-08-03 18:19:24 info: POST /api/auth/login
+2025-08-03 18:19:24 error: undefined
+2025-08-03 18:19:24 info: POST /api/auth/login
+2025-08-03 18:19:24 error: undefined
+2025-08-03 18:19:25 info: POST /api/auth/login
+2025-08-03 18:19:25 error: undefined
+2025-08-03 18:19:25 info: POST /api/auth/login
+2025-08-03 18:19:25 error: undefined
+2025-08-03 18:19:28 info: GET /api/events?search=&category=BUSINESS
+2025-08-03 18:19:35 info: GET /api/events?search=&category=
+2025-08-03 18:19:35 info: GET /api/events?search=&category=
+2025-08-03 18:19:36 info: GET /api/events?search=&category=
+2025-08-03 18:20:05 info: POST /api/auth/login
+2025-08-03 18:20:06 info: GET /api/events?search=&category=
+2025-08-03 18:20:06 info: GET /api/events?search=&category=
+2025-08-03 18:20:06 info: GET /api/events?search=&category=
+2025-08-03 18:20:06 info: GET /api/events?search=&category=
+2025-08-03 18:20:23 info: GET /api/auth/profile
+2025-08-03 18:28:47 info: GET /api/events?search=&category=
+2025-08-03 18:28:47 info: GET /api/events?search=&category=
+2025-08-03 18:28:47 info: GET /api/events?search=&category=
+2025-08-03 18:29:04 info: GET /api/events/5
+2025-08-03 18:29:12 info: GET /api/events?search=&category=
+2025-08-03 18:29:12 info: GET /api/events?search=&category=
+2025-08-03 18:29:12 info: GET /api/events?search=&category=
+2025-08-03 18:37:42 info: GET /api/events/14
+2025-08-03 18:37:47 info: GET /api/events?search=&category=
+2025-08-03 18:37:47 info: GET /api/events?search=&category=
+2025-08-03 18:37:47 info: GET /api/events?search=&category=
+2025-08-03 19:15:00 info: GET /api/events?search=&category=
+2025-08-03 19:15:02 info: GET /api/events?search=&category=
+2025-08-03 19:15:11 info: GET /api/auth/profile
+2025-08-03 19:59:22 info: GET /api/auth/profile
+2025-08-03 19:59:37 info: GET /api/auth/profile
+2025-08-03 19:59:40 info: GET /api/auth/profile
+2025-08-03 19:59:56 info: GET /api/auth/profile
+2025-08-03 20:00:03 info: GET /api/auth/profile
+2025-08-03 20:01:09 info: GET /api/auth/profile
+2025-08-03 20:01:12 info: GET /api/auth/profile
+2025-08-03 20:04:47 info: GET /api/auth/profile
+2025-08-03 20:06:57 info: GET /api/auth/profile
+2025-08-03 20:08:57 info: GET /api/auth/profile
+2025-08-03 20:09:02 info: GET /api/auth/profile
+2025-08-03 20:09:52 info: GET /api/auth/profile
+2025-08-03 20:11:02 info: GET /api/auth/profile
+2025-08-03 20:11:17 info: GET /api/auth/profile
+2025-08-03 20:11:17 info: GET /api/auth/profile
+2025-08-03 20:11:53 info: GET /api/auth/profile
+2025-08-03 20:12:15 info: GET /api/auth/profile
+2025-08-03 20:14:46 info: GET /api/auth/profile
+2025-08-03 20:24:14 info: GET /api/auth/profile
+2025-08-03 20:46:54 info: GET /api/auth/profile
+2025-08-03 20:46:59 info: GET /api/events?search=&category=
+2025-08-03 20:46:59 info: GET /api/events?search=&category=
+2025-08-03 20:47:00 info: GET /api/events?search=&category=
+2025-08-03 20:47:03 info: GET /api/events?search=&category=
+2025-08-03 20:47:04 info: GET /api/events?search=&category=
+2025-08-03 20:47:04 info: GET /api/events?search=&category=
+2025-08-03 20:47:32 info: POST /api/auth/login
