@@ -270,3 +270,9 @@
 2025-08-02 17:59:34 info: POST /api/vouchers
 2025-08-02 17:59:34 error: undefined
 2025-08-02 18:00:04 info: POST /api/vouchers
+2025-08-03 10:40:31 info: GET /api/events?search=&category=
+2025-08-03 10:40:33 info: GET /api/events?search=&category=
+2025-08-03 10:40:33 info: GET /api/events?search=&category=
+2025-08-03 10:40:36 info: GET /api/events?search=&category=
+2025-08-03 10:40:39 info: GET /api/events?search=&category=
+2025-08-03 11:00:24 info: POST /api/vouchers
