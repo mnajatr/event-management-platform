@@ -702,3 +702,17 @@
 2025-08-03 23:20:50 error: undefined
 2025-08-03 23:22:43 info: POST /api/users/upload-profile-picture
 2025-08-03 23:22:43 error: undefined
+2025-08-03 23:39:58 info: POST /api/users/upload-profile-picture
+2025-08-03 23:39:58 info: GET /api/auth/profile
+2025-08-03 23:39:58 info: GET /uploads/profilePicture-1754239198180-566589824.jpg
+2025-08-03 23:40:08 info: POST /api/users/upload-profile-picture
+2025-08-03 23:40:08 info: GET /api/auth/profile
+2025-08-03 23:40:08 info: GET /uploads/profilePicture-1754239208873-896497680.jpeg
+2025-08-03 23:40:36 info: GET /api/events?search=&category=
+2025-08-03 23:40:39 info: GET /api/events?search=&category=
+2025-08-03 23:40:39 info: GET /api/events?search=&category=
+2025-08-03 23:42:46 info: GET /api/events?search=&category=
+2025-08-03 23:42:55 info: GET /api/auth/profile
+2025-08-03 23:42:55 info: GET /api/auth/profile
+2025-08-03 23:42:55 info: GET /uploads/profilePicture-1754239208873-896497680.jpeg
+2025-08-03 23:44:10 info: GET /uploads/profilePicture-1754239208873-896497680.jpeg
