@@ -5,8 +5,10 @@ import eventRoutes from "./routes/event.routes";
 import authRoutes from "./routes/auth.routes";
 import { notFoundMiddleware } from "./middlewares/not-found.middleware";
 import { errorMiddleware } from "./middlewares/error.middleware";
+import userRoutes from "./routes/user.routes";
 import logger from "./utils/logger";
 import voucherRouters from "./routes/voucher.routes";
+import path from "path";
 
 class App {
   public app: Application;
@@ -45,6 +47,9 @@ class App {
     this.app.use("/api/events", eventRoutes);
     this.app.use("/api/auth", authRoutes);
     this.app.use("/api/vouchers", voucherRouters);
+    this.app.use("/api/users", userRoutes); 
+    this.app.use('/uploads', express.static('uploads'));
+;
 
     // Handle 404 - Must be AFTER all routes
     this.app.use(notFoundMiddleware);

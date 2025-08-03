@@ -34,6 +34,7 @@ interface ProfileData {
   referralCode: string;
   pointsBalance: number;
   coupons: Coupon[];
+  profilePicture: string | null;
 }
 
 export default function ProfilePage() {
@@ -41,15 +42,11 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [selectedCoupon, setSelectedCoupon] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
+  const fetchProfile = () => {
     const token = localStorage.getItem('token');
-
-    if (!token) {
-      router.push('/auth/login');
-      return;
-    }
-
     axios
       .get('http://localhost:8000/api/auth/profile', {
         headers: { Authorization: `Bearer ${token}` },
@@ -57,13 +54,49 @@ export default function ProfilePage() {
       .then((res) => {
         setProfile(res.data.data);
       })
-      .catch(() => {
-        toast.error('Failed to fetch profile');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      .catch(() => toast.error('Failed to fetch profile'))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/auth/login');
+      return;
+    }
+    fetchProfile();
   }, [router]);
+
+  const handleUpload = async () => {
+    if (!file) {
+      toast.error('No file selected');
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+    const formData = new FormData();
+    formData.append('profilePicture', file);
+
+    setUploading(true);
+    try {
+      await axios.post(
+        'http://localhost:8000/api/users/upload-profile-picture',
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      toast.success('Profile picture updated!');
+      fetchProfile();
+    } catch {
+      toast.error('Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   if (loading) return <p className="text-center mt-10">Loading...</p>;
   if (!profile) return null;
@@ -72,14 +105,32 @@ export default function ProfilePage() {
     <div className="max-w-3xl mx-auto py-10 px-4">
       <Card>
         <CardHeader className="flex flex-col items-center gap-2">
-          <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center text-3xl">
-            👤
+          <div className="w-20 h-20 rounded-full bg-muted overflow-hidden">
+            {profile.profilePicture ? (
+              <img
+                src={`http://localhost:8000${profile.profilePicture}`}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-3xl">👤</div>
+            )}
           </div>
           <CardTitle className="text-center">{profile.fullName}</CardTitle>
           <p className="text-sm text-muted-foreground">{profile.email}</p>
         </CardHeader>
 
         <CardContent className="grid gap-5 relative">
+          <div>
+            <Label className="mb-2 block">Change Profile Picture</Label>
+            <div className="flex items-center gap-4">
+              <Input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+              <Button onClick={handleUpload} disabled={uploading}>
+                {uploading ? 'Uploading...' : 'Upload'}
+              </Button>
+            </div>
+          </div>
+
           <div>
             <Label className="mb-2 block">Referral Code</Label>
             <Input value={profile.referralCode} disabled />
