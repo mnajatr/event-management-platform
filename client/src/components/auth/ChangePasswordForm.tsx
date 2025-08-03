@@ -65,7 +65,7 @@ export default function ChangePasswordForm() {
       <CardContent className="space-y-4">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <Label htmlFor="currentPassword">Current Password</Label>
+            <Label htmlFor="currentPassword" className="mb-2 block">Current Password</Label>
             <Input
               type="password"
               id="currentPassword"
@@ -79,7 +79,7 @@ export default function ChangePasswordForm() {
           </div>
 
           <div>
-            <Label htmlFor="newPassword">New Password</Label>
+            <Label htmlFor="newPassword" className="mb-2 block">New Password</Label>
             <Input
               type="password"
               id="newPassword"
