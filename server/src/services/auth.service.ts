@@ -153,4 +153,16 @@ export class AuthService {
       createdAt: user.createdAt,
     };
   }
+
+  async updateUserPassword(userId: number, currentPassword: string, newPassword: string): Promise<void> {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) throw new AppError("User not found", 404);
+
+  const isMatch = await HashUtil.comparePassword(currentPassword, user.password);
+  if (!isMatch) throw new AppError("Current password is incorrect", 400);
+
+  const hashedNew = await HashUtil.hashPassword(newPassword);
+  await prisma.user.update({ where: { id: userId }, data: { password: hashedNew } });
+}
+
 }
