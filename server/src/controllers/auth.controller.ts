@@ -5,7 +5,6 @@ import { AppError } from "../errors/app.error";
 const authService = new AuthService();
 
 export class AuthController {
-  // Register umum (tetap dipakai jika perlu)
   async register(request: Request, response: Response, next: NextFunction) {
     try {
       const { fullName, email, password, profilePicture, role, referralCode } =
@@ -23,62 +22,6 @@ export class AuthController {
       response.status(201).json({
         success: true,
         message: "User registered successfully",
-        data: result,
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async registerCustomer(
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ) {
-    try {
-      const { fullName, email, password, profilePicture, referralCode } =
-        request.body;
-
-      const result = await authService.registerUser({
-        fullName,
-        email,
-        password,
-        profilePicture,
-        role: "CUSTOMER",
-        referralCode,
-      });
-
-      response.status(201).json({
-        success: true,
-        message: "Customer registered successfully",
-        data: result,
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async registerOrganizer(
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ) {
-    try {
-      const { fullName, email, password, profilePicture, referralCode } =
-        request.body;
-
-      const result = await authService.registerUser({
-        fullName,
-        email,
-        password,
-        profilePicture,
-        role: "ORGANIZER",
-        referralCode,
-      });
-
-      response.status(201).json({
-        success: true,
-        message: "Organizer registered successfully",
         data: result,
       });
     } catch (error) {
@@ -138,4 +81,18 @@ export class AuthController {
       next(error);
     }
   }
+
+  async updatePassword(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (!req.user) throw new AppError("Unauthorized", 401);
+
+    const { currentPassword, newPassword } = req.body;
+    await authService.updateUserPassword(req.user.id, currentPassword, newPassword);
+
+    res.status(200).json({ success: true, message: "Password updated successfully" });
+  } catch (err) {
+    next(err);
+  }
+}
+
 }
