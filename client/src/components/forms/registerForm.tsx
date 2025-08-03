@@ -39,7 +39,13 @@ export default function RegisterForm() {
       router.push("/auth/login");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "Register failed");
+        const message = error.response?.data?.message?.toLowerCase();
+
+        if (message?.includes("referral")) {
+          toast.error("Referral code is not valid. Please check again.");
+        } else {
+          toast.error(error.response?.data?.message || "Register failed");
+        }
       } else if (error instanceof Error) {
         toast.error(error.message);
       } else {
@@ -102,7 +108,7 @@ export default function RegisterForm() {
           </div>
 
           <div>
-            <Label htmlFor="password" className="mb-1 bloc">
+            <Label htmlFor="password" className="mb-1 block">
               Password
             </Label>
             <Input id="password" type="password" {...register("password")} />

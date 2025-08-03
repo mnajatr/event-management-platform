@@ -5,7 +5,11 @@ import { HashUtil } from "../utils/hash";
 import { JWTUtil } from "../utils/jwt";
 import { generateReferralCode } from "../utils/generated-code";
 import { ReferralService } from "./referral.service";
-import { CreateUserInput, LoginInput, UserResponse } from "../validators/auth.validator";
+import {
+  CreateUserInput,
+  LoginInput,
+  UserResponse,
+} from "../validators/auth.validator";
 
 export class AuthService {
   private referralService = new ReferralService();
@@ -32,6 +36,7 @@ export class AuthService {
     }
 
     // Validate referral code if provided
+    // Validate referral code if provided
     if (
       referralCode &&
       !(await this.referralService.validateReferralCode(referralCode))
@@ -50,7 +55,7 @@ export class AuthService {
       await prisma.user.findUnique({
         where: { referralCode: userReferralCode },
       })
-    ); 
+    );
 
     // Create user
     const user = await prisma.user.create({
@@ -154,15 +159,24 @@ export class AuthService {
     };
   }
 
-  async updateUserPassword(userId: number, currentPassword: string, newPassword: string): Promise<void> {
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user) throw new AppError("User not found", 404);
+  async updateUserPassword(
+    userId: number,
+    currentPassword: string,
+    newPassword: string
+  ): Promise<void> {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new AppError("User not found", 404);
 
-  const isMatch = await HashUtil.comparePassword(currentPassword, user.password);
-  if (!isMatch) throw new AppError("Current password is incorrect", 400);
+    const isMatch = await HashUtil.comparePassword(
+      currentPassword,
+      user.password
+    );
+    if (!isMatch) throw new AppError("Current password is incorrect", 400);
 
-  const hashedNew = await HashUtil.hashPassword(newPassword);
-  await prisma.user.update({ where: { id: userId }, data: { password: hashedNew } });
-}
-
+    const hashedNew = await HashUtil.hashPassword(newPassword);
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedNew },
+    });
+  }
 }

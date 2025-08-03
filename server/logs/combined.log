@@ -276,3 +276,158 @@
 2025-08-03 10:40:36 info: GET /api/events?search=&category=
 2025-08-03 10:40:39 info: GET /api/events?search=&category=
 2025-08-03 11:00:24 info: POST /api/vouchers
+2025-08-03 14:42:00 info: GET /api/events?search=&category=
+2025-08-03 14:42:34 info: POST /api/auth/login
+2025-08-03 14:42:35 info: POST /api/auth/login
+2025-08-03 14:42:36 info: GET /api/events?search=&category=
+2025-08-03 14:42:36 info: GET /api/events?search=&category=
+2025-08-03 14:42:36 info: GET /api/events?search=&category=
+2025-08-03 14:42:36 info: GET /api/events?search=&category=
+2025-08-03 15:02:30 info: GET /api/events?search=&category=
+2025-08-03 15:06:01 info: POST /api/auth/login
+2025-08-03 15:06:02 info: GET /api/events?search=&category=
+2025-08-03 15:06:02 info: GET /api/events?search=&category=
+2025-08-03 15:06:02 info: GET /api/events?search=&category=
+2025-08-03 15:06:03 info: GET /api/events?search=&category=
+2025-08-03 15:23:31 info: GET /api/events?search=&category=
+2025-08-03 15:28:42 info: GET /api/events?search=&category=
+2025-08-03 15:45:26 info: GET /api/events?search=&category=
+2025-08-03 15:45:27 info: GET /api/events?search=&category=
+2025-08-03 15:45:27 info: GET /api/events?search=&category=
+2025-08-03 15:51:36 info: POST /api/auth/login
+2025-08-03 15:51:38 info: POST /api/auth/login
+2025-08-03 15:51:39 info: GET /api/events?search=&category=
+2025-08-03 15:51:39 info: GET /api/events?search=&category=
+2025-08-03 15:51:39 info: GET /api/events?search=&category=
+2025-08-03 15:51:39 info: GET /api/events?search=&category=
+2025-08-03 15:57:06 info: GET /api/events?search=&category=
+2025-08-03 16:03:47 info: GET /api/events?search=&category=
+2025-08-03 16:04:34 info: GET /api/events?search=&category=
+2025-08-03 16:05:09 info: GET /api/events?search=&category=
+2025-08-03 16:05:40 info: GET /api/events?search=&category=
+2025-08-03 16:05:50 info: GET /api/events?search=&category=
+2025-08-03 16:08:14 info: GET /api/events?search=&category=
+2025-08-03 16:08:19 info: GET /api/events?search=&category=
+2025-08-03 16:08:37 info: POST /api/auth/login
+2025-08-03 16:08:37 info: GET /api/events?search=&category=
+2025-08-03 16:08:38 info: GET /api/events?search=&category=
+2025-08-03 16:08:38 info: GET /api/events?search=&category=
+2025-08-03 16:08:38 info: GET /api/events?search=&category=
+2025-08-03 16:18:16 info: GET /api/events?search=&category=
+2025-08-03 16:19:19 info: POST /api/auth/register
+2025-08-03 16:19:19 error: undefined
+2025-08-03 16:19:22 info: POST /api/auth/register
+2025-08-03 16:19:22 error: undefined
+2025-08-03 16:19:26 info: POST /api/auth/register
+2025-08-03 16:19:26 error: undefined
+2025-08-03 16:19:27 info: POST /api/auth/register
+2025-08-03 16:19:27 error: undefined
+2025-08-03 16:19:36 info: POST /api/auth/register
+2025-08-03 16:19:36 error: undefined
+2025-08-03 16:24:42 info: POST /api/auth/register
+2025-08-03 16:24:43 error: undefined
+2025-08-03 16:24:44 info: POST /api/auth/register
+2025-08-03 16:24:44 error: undefined
+2025-08-03 16:24:50 info: POST /api/auth/register
+2025-08-03 16:24:50 error: undefined
+2025-08-03 16:24:58 info: POST /api/auth/register
+2025-08-03 16:25:44 info: POST /api/auth/register
+2025-08-03 16:25:44 error: undefined
+2025-08-03 16:30:25 info: POST /api/auth/login
+2025-08-03 16:30:25 error: undefined
+2025-08-03 16:30:32 info: POST /api/auth/login
+2025-08-03 16:30:32 error: undefined
+2025-08-03 16:30:32 info: POST /api/auth/login
+2025-08-03 16:30:32 error: undefined
+2025-08-03 16:30:33 info: POST /api/auth/login
+2025-08-03 16:30:33 error: undefined
+2025-08-03 16:30:33 info: POST /api/auth/login
+2025-08-03 16:30:33 error: undefined
+2025-08-03 16:30:33 info: POST /api/auth/login
+2025-08-03 16:30:33 error: undefined
+2025-08-03 16:30:33 info: POST /api/auth/login
+2025-08-03 16:30:33 error: undefined
+2025-08-03 16:30:33 info: POST /api/auth/login
+2025-08-03 16:30:33 error: undefined
+2025-08-03 16:30:34 info: POST /api/auth/login
+2025-08-03 16:30:34 error: undefined
+2025-08-03 16:30:37 info: POST /api/auth/login
+2025-08-03 16:30:37 error: undefined
+2025-08-03 16:30:51 info: POST /api/auth/login
+2025-08-03 16:30:51 error: undefined
+2025-08-03 16:30:52 info: POST /api/auth/login
+2025-08-03 16:30:52 error: undefined
+2025-08-03 16:31:12 info: GET /api/events?search=&category=
+2025-08-03 16:31:13 info: GET /api/events?search=&category=
+2025-08-03 16:31:13 info: GET /api/events?search=&category=
+2025-08-03 16:32:51 info: POST /api/auth/login
+2025-08-03 16:32:52 error: undefined
+2025-08-03 16:32:52 info: POST /api/auth/login
+2025-08-03 16:32:53 error: undefined
+2025-08-03 16:33:04 info: POST /api/auth/login
+2025-08-03 16:33:04 error: undefined
+2025-08-03 16:33:05 info: POST /api/auth/login
+2025-08-03 16:33:05 error: undefined
+2025-08-03 16:33:24 info: POST /api/auth/login
+2025-08-03 16:33:25 error: undefined
+2025-08-03 16:34:03 info: POST /api/auth/login
+2025-08-03 16:34:04 info: GET /api/events?search=&category=
+2025-08-03 16:34:04 info: GET /api/events?search=&category=
+2025-08-03 16:34:04 info: GET /api/events?search=&category=
+2025-08-03 16:34:04 info: GET /api/events?search=&category=
+2025-08-03 16:34:43 info: POST /api/auth/register
+2025-08-03 16:35:03 info: POST /api/auth/login
+2025-08-03 16:35:04 info: GET /api/events?search=&category=
+2025-08-03 16:35:04 info: GET /api/events?search=&category=
+2025-08-03 16:35:04 info: GET /api/events?search=&category=
+2025-08-03 16:35:04 info: GET /api/events?search=&category=
+2025-08-03 16:40:52 info: GET /api/events?search=&category=
+2025-08-03 16:41:48 info: GET /api/events?search=&category=
+2025-08-03 16:42:26 info: GET /api/events?search=&category=
+2025-08-03 16:42:31 info: GET /api/events/2
+2025-08-03 16:42:37 info: GET /api/events?search=&category=
+2025-08-03 16:42:37 info: GET /api/events?search=&category=
+2025-08-03 16:42:38 info: GET /api/events?search=&category=
+2025-08-03 16:42:49 info: GET /api/events?search=&category=
+2025-08-03 16:42:49 info: GET /api/events?search=&category=
+2025-08-03 16:42:49 info: GET /api/events?search=&category=
+2025-08-03 16:44:08 info: GET /api/events?search=&category=
+2025-08-03 16:44:49 info: POST /api/auth/register
+2025-08-03 16:44:49 error: undefined
+2025-08-03 16:44:50 info: POST /api/auth/register
+2025-08-03 16:44:50 error: undefined
+2025-08-03 16:44:51 info: POST /api/auth/register
+2025-08-03 16:44:51 error: undefined
+2025-08-03 16:44:53 info: POST /api/auth/register
+2025-08-03 16:44:53 error: undefined
+2025-08-03 16:49:53 info: POST /api/auth/register
+2025-08-03 16:49:53 error: undefined
+2025-08-03 16:49:54 info: POST /api/auth/register
+2025-08-03 16:49:54 error: undefined
+2025-08-03 16:49:59 info: POST /api/auth/register
+2025-08-03 16:49:59 error: undefined
+2025-08-03 16:50:00 info: POST /api/auth/register
+2025-08-03 16:50:00 error: undefined
+2025-08-03 16:50:01 info: POST /api/auth/register
+2025-08-03 16:50:01 error: undefined
+2025-08-03 16:50:48 info: POST /api/auth/register
+2025-08-03 16:51:29 info: POST /api/auth/register
+2025-08-03 16:51:29 error: undefined
+2025-08-03 16:51:30 info: POST /api/auth/register
+2025-08-03 16:51:30 error: undefined
+2025-08-03 16:53:58 info: POST /api/auth/register
+2025-08-03 16:53:58 error: undefined
+2025-08-03 16:55:40 info: GET /api/events?search=&category=BUSINESS
+2025-08-03 16:57:15 info: POST /api/auth/register
+2025-08-03 16:57:15 error: undefined
+2025-08-03 17:01:02 info: GET /api/auth/register
+2025-08-03 17:01:02 info: GET /favicon.ico
+2025-08-03 17:06:26 info: POST /api/auth/register
+2025-08-03 17:06:42 info: POST /api/auth/register
+2025-08-03 17:06:56 info: POST /api/auth/register
+2025-08-03 17:07:32 info: POST /api/auth/register
+2025-08-03 17:07:41 info: POST /api/auth/register
+2025-08-03 17:11:42 info: POST /api/auth/register
+2025-08-03 17:11:59 info: POST /api/auth/register
+2025-08-03 17:11:59 error: undefined
+2025-08-03 17:16:31 info: POST /api/auth/register
