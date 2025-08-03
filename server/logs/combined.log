@@ -519,3 +519,11 @@
 2025-08-03 20:47:34 info: GET /api/events?search=&category=
 2025-08-03 20:47:34 info: GET /api/events?search=&category=
 2025-08-03 20:47:44 info: GET /api/auth/profile
+2025-08-03 21:00:18 info: GET /api/auth/profile
+2025-08-03 21:00:18 info: GET /api/auth/profile
+2025-08-03 21:09:58 info: GET /api/auth/profile
+2025-08-03 21:09:58 info: GET /api/auth/profile
+2025-08-03 21:21:29 info: GET /api/auth/profile
+2025-08-03 21:21:29 info: GET /api/auth/profile
+2025-08-03 21:59:06 info: POST /api/auth/login
+2025-08-03 21:59:06 error: undefined
