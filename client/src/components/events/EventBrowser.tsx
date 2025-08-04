@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getEvents } from "@/lib/api/events";
@@ -9,6 +9,8 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { TEvent } from "@/types/event.type";
 import { EventList } from "./EventList";
 import { EventFilters } from "./EventFilters";
+import { useSearchParams } from "next/navigation";
+import { fa } from "zod/v4/locales";
 
 interface EventBrowserProps {
   initialEvents: TEvent[];
@@ -17,11 +19,29 @@ interface EventBrowserProps {
 export const EventBrowser = ({ initialEvents }: EventBrowserProps) => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const { searchTerm, selectedCategory, setSelectTerm, setSelectedCategory } =
-    useEventFilterStore();
+  const {
+    searchTerm,
+    selectedCategory,
+    locationFilter,
+    setSearchTerm,
+    setSelectedCategory,
+    setLocationFilter,
+  } = useEventFilterStore();
+
+  const isInitialized = useRef(false);
+  useEffect(() => {
+    if (!isInitialized.current) {
+      setSearchTerm(searchParams.get("search") || "");
+      setSelectedCategory(searchParams.get("category") || "");
+      setLocationFilter(searchParams.get("location") || "");
+      isInitialized.current = true;
+    }
+  }, [searchParams, setSearchTerm, setSelectedCategory, setLocationFilter]);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const debouncedLocationFilter = useDebounce(locationFilter, 500);
 
   const {
     data: events,
@@ -31,7 +51,11 @@ export const EventBrowser = ({ initialEvents }: EventBrowserProps) => {
   } = useQuery({
     queryKey: ["events", debouncedSearchTerm, selectedCategory],
     queryFn: () =>
-      getEvents({ search: debouncedSearchTerm, category: selectedCategory }),
+      getEvents({
+        search: debouncedSearchTerm,
+        category: selectedCategory,
+        location: debouncedLocationFilter,
+      }),
     initialData: initialEvents,
     placeholderData: (previousData) => previousData,
   });
@@ -44,6 +68,9 @@ export const EventBrowser = ({ initialEvents }: EventBrowserProps) => {
     if (selectedCategory) {
       params.set("category", selectedCategory);
     }
+    if (debouncedLocationFilter) {
+      params.set("location", debouncedLocationFilter);
+    }
     router.replace(`${pathname}?${params.toString()}`);
   }, [debouncedSearchTerm, selectedCategory, pathname, router]);
 
@@ -52,8 +79,10 @@ export const EventBrowser = ({ initialEvents }: EventBrowserProps) => {
       <EventFilters
         initialSearch={searchTerm}
         initialCategory={selectedCategory}
-        onSearchChange={setSelectTerm}
+        initialLocation={locationFilter}
+        onSearchChange={setSearchTerm}
         onCategoryChange={setSelectedCategory}
+        onLocationChange={setLocationFilter}
       />
 
       {isLoading && <div className="text-center">Mencari event... ⌛</div>}
