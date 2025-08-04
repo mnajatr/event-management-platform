@@ -1,14 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { JWTUtil } from "../utils/jwt";
 import { AppError } from "../errors/app.error.js";
-
-// export interface AuthenticatedRequest extends Request {
-//   user: {
-//     id: number;
-//     email: string;
-//     role: string;
-//   };
-// }
+import { User, UserRole } from "../generated/prisma";
 
 export function authMiddleware(
   request: Request,
@@ -25,7 +18,22 @@ export function authMiddleware(
     const token = authHeader.substring(7); // Remove "Bearer "
     const decoded = JWTUtil.verifyToken(token);
 
-    request.user = decoded;
+    if (
+      typeof decoded !== "object" ||
+      decoded === null ||
+      typeof decoded.role !== "string"
+    ) {
+      throw new AppError("Invalid token payload", 404);
+    }
+
+    const isValidRole = Object.values(UserRole).includes(
+      decoded.role as UserRole
+    );
+    if (!isValidRole) {
+      throw new AppError("Invalid not specified in token", 401);
+    }
+
+    request.user = decoded as { id: number; email: string; role: UserRole };
     next();
   } catch (error) {
     next(error);
