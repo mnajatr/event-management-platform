@@ -28,4 +28,20 @@ export class VoucherService {
 
     return newVoucher;
   }
+
+  async findVouchersByEventId(eventId: number) {
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+    });
+
+    if (!event) {
+      throw new AppError("Event tidak ditemukan", 404);
+    }
+
+    const vouchers = await prisma.voucher.findMany({
+      where: { eventId },
+    });
+
+    return vouchers;
+  }
 }
