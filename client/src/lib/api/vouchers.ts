@@ -18,3 +18,17 @@ export const createVoucher = async (
     throw new Error("Gagal membuat vouhcer.");
   }
 };
+
+export const getVouchersByEventId = async (
+  eventId: number
+): Promise<TVoucher[]> => {
+  try {
+    const response = await axios.get<{ data: TVoucher[] }>(
+      `${API_URL}/vouchers/event/${eventId}`
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error(`Failed to fetch vouchers ${error}`);
+    throw new Error("Gagal mengambil data voucher.");
+  }
+};
