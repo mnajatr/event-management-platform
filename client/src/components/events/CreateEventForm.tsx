@@ -30,6 +30,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { DatePickerFormField } from "./DatePickerFormField";
+import { toast } from "sonner";
 
 export const CreateEventForm = () => {
   const router = useRouter();
@@ -49,12 +50,13 @@ export const CreateEventForm = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: createEvent,
     onSuccess: (data) => {
-      alert("Event created successfully!");
+      toast.success("Event berhasil dibuat!");
       router.push(`/events/${data.id}`);
-      form.reset();
     },
     onError: (error) => {
-      alert(`Error creating event: ${error.message}`);
+      toast.error("Gagal membuat event.", {
+        description: error.message,
+      });
     },
   });
 
