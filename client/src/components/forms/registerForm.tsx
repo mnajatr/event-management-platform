@@ -11,9 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import api from "@/lib/axios";
+import { AxiosError } from "axios";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -34,13 +35,12 @@ export default function RegisterForm() {
   const onSubmit = async (data: RegisterInput) => {
     try {
       const { confirmPassword, ...payload } = data;
-      await axios.post("http://localhost:8000/api/auth/register", payload);
+      await api.post("/auth/register", payload);
       toast.success("Register success!");
       router.push("/auth/login");
     } catch (error) {
-      if (axios.isAxiosError(error)) {
+      if (error instanceof AxiosError) {
         const message = error.response?.data?.message?.toLowerCase();
-
         if (message?.includes("referral")) {
           toast.error("Referral code is not valid. Please check again.");
         } else {
