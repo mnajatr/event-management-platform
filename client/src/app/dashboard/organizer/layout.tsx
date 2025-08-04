@@ -1,14 +1,19 @@
-// app/dashboard/layout.tsx
-'use client';
+// src/app/dashboard/organizer/layout.tsx
+import type { ReactNode } from 'react';
 
-import { ReactNode } from 'react';
-import Sidebar from '@/components/dashboard/Sidebar';
-
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+export default function OrganizerDashboardLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <main className="flex-1 bg-muted/40 p-6">{children}</main>
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-[240px_1fr]">
+      <aside className="bg-muted p-6 hidden md:block">
+        <h2 className="text-xl font-bold mb-4">Organizer Menu</h2>
+        {/* Sidebar content */}
+        <ul className="space-y-2 text-sm">
+          <li>🏠 Dashboard</li>
+          <li>🎟️ Events</li>
+          <li>📊 Reports</li>
+        </ul>
+      </aside>
+      <main className="p-6">{children}</main>
     </div>
   );
 }
