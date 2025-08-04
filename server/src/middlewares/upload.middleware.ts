@@ -1,15 +1,15 @@
-import multer from 'multer';
-import path from 'path';
+// server/src/middlewares/upload.middleware.ts
+import multer from "multer";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import cloudinary from "../utils/cloudinary";
 
-const storage = multer.diskStorage({
-  destination: function (_req, _file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (_req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
-  },
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: async (_req, file) => ({
+    folder: "event-platform",
+    resource_type: "image",
+    public_id: `${Date.now()}-${file.originalname}`,
+  }),
 });
 
 export const upload = multer({ storage });

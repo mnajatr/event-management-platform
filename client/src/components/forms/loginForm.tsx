@@ -7,8 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import axios from "axios";
+import api from "@/lib/axios";
 import { useRouter } from "next/navigation";
+import { setSession } from "@/utils/auth";
+import { AxiosError } from "axios";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -23,25 +25,15 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginInput) => {
     try {
-      const res = await axios.post(
-        "http://localhost:8000/api/auth/login",
-        data
-      );
+      const res = await api.post("/auth/login", data);
+      const { token, user } = res.data.data;
 
-      const {token, user} = res.data.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-
+      setSession(token, user); // simpan token
       toast.success("Login success!");
-      router.push("/");
+      router.push("/"); // redirect
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "Login failed");
-      } else if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("Login failed");
-      }
+      const err = error as AxiosError<{ message: string }>;
+      toast.error(err.response?.data?.message || "Login failed");
     }
   };
 

@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { toast } from 'sonner';
+import api from '@/lib/axios';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import {
@@ -20,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { getUserRole, isTokenExpired } from '@/lib/auth';
 
 interface Coupon {
   id: number;
@@ -45,25 +47,38 @@ export default function ProfilePage() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  const fetchProfile = () => {
-    const token = localStorage.getItem('token');
-    axios
-      .get('http://localhost:8000/api/auth/profile', {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        setProfile(res.data.data);
-      })
-      .catch(() => toast.error('Failed to fetch profile'))
-      .finally(() => setLoading(false));
-  };
+  const role = getUserRole();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/auth/login');
-      return;
-    }
+    const fetchProfile = async () => {
+      if (isTokenExpired()) {
+        toast.error("Session expired. Please login again.");
+        localStorage.clear();
+        router.replace("/auth/login");
+        return;
+      }
+
+      try {
+        const res = await api.get("/auth/profile");
+        setProfile(res.data.data);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 401) {
+            toast.error("Unauthorized. Please login again.");
+            router.replace("/auth/login");
+          } else {
+            toast.error(error.response?.data?.message || "Failed to fetch profile");
+          }
+        } else if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("Failed to fetch profile");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchProfile();
   }, [router]);
 
@@ -73,25 +88,21 @@ export default function ProfilePage() {
       return;
     }
 
-    const token = localStorage.getItem('token');
     const formData = new FormData();
     formData.append('profilePicture', file);
 
     setUploading(true);
     try {
-      await axios.post(
-        'http://localhost:8000/api/users/upload-profile-picture',
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      await api.post('/users/upload-profile-picture', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       toast.success('Profile picture updated!');
-      fetchProfile();
-    } catch {
+      // refetch profile
+      const res = await api.get("/auth/profile");
+      setProfile(res.data.data);
+    } catch (error) {
       toast.error('Upload failed');
     } finally {
       setUploading(false);
@@ -121,6 +132,7 @@ export default function ProfilePage() {
         </CardHeader>
 
         <CardContent className="grid gap-5 relative">
+          {/* Upload Foto */}
           <div>
             <Label className="mb-2 block">Change Profile Picture</Label>
             <div className="flex items-center gap-4">
@@ -131,52 +143,57 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <div>
-            <Label className="mb-2 block">Referral Code</Label>
-            <Input value={profile.referralCode} disabled />
-          </div>
+          {/* Hanya CUSTOMER yang bisa lihat referral & kupon */}
+          {role === 'CUSTOMER' && (
+            <>
+              <div>
+                <Label className="mb-2 block">Referral Code</Label>
+                <Input value={profile.referralCode} disabled />
+              </div>
 
-          <div>
-            <Label className="mb-2 block">My Voucher</Label>
-            {profile.coupons?.length > 0 ? (
-              <Select
-                onValueChange={(val) => setSelectedCoupon(val)}
-                value={selectedCoupon}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a coupon" />
-                </SelectTrigger>
-                <SelectContent>
-                  {profile.coupons.map((coupon) => (
-                    <SelectItem key={coupon.id} value={coupon.couponCode}>
-                      {coupon.couponCode} - Rp{' '}
-                      {coupon.discountValue.toLocaleString('id-ID')} (valid until{' '}
-                      {new Date(coupon.expiresAt).toLocaleDateString()})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : (
-              <p className="text-sm text-muted-foreground mt-1">
-                No active coupons
-              </p>
-            )}
-          </div>
+              <div>
+                <Label className="mb-2 block">My Voucher</Label>
+                {profile.coupons?.length > 0 ? (
+                  <Select
+                    onValueChange={(val) => setSelectedCoupon(val)}
+                    value={selectedCoupon}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a coupon" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {profile.coupons.map((coupon) => (
+                        <SelectItem key={coupon.id} value={coupon.couponCode}>
+                          {coupon.couponCode} - Rp{' '}
+                          {coupon.discountValue.toLocaleString('id-ID')} (valid until{' '}
+                          {new Date(coupon.expiresAt).toLocaleDateString()})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    No active coupons
+                  </p>
+                )}
+              </div>
 
-          <div>
-            <Label className="mb-2 block">My Point</Label>
-            <Input
-              value={`Rp ${profile.pointsBalance.toLocaleString('id-ID')}`}
-              disabled
-            />
-          </div>
+              <div>
+                <Label className="mb-2 block">My Point</Label>
+                <Input
+                  value={`Rp ${profile.pointsBalance.toLocaleString('id-ID')}`}
+                  disabled
+                />
+              </div>
+            </>
+          )}
 
+          {/* Reset password */}
           <div>
             <Label className="mb-2 block">Password</Label>
             <Input type="password" value="********" disabled />
           </div>
 
-          {/* Tombol kecil di pojok kanan bawah */}
           <div className="flex justify-end">
             <Button
               className="bg-black text-white px-4 py-2 text-sm"
