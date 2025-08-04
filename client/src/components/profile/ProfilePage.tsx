@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { getUserRole, isTokenExpired } from '@/lib/auth';
+import ProfilePictureUploader from './UploadPicture';
 
 interface Coupon {
   id: number;
@@ -44,13 +45,19 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [selectedCoupon, setSelectedCoupon] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
-  const [file, setFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
-
   const role = getUserRole();
 
+  const fetchProfile = async () => {
+    try {
+      const res = await api.get("/auth/profile");
+      setProfile(res.data.data);
+    } catch (error) {
+      toast.error("Failed to refetch profile");
+    }
+  };
+
   useEffect(() => {
-    const fetchProfile = async () => {
+    const init = async () => {
       if (isTokenExpired()) {
         toast.error("Session expired. Please login again.");
         localStorage.clear();
@@ -69,8 +76,6 @@ export default function ProfilePage() {
           } else {
             toast.error(error.response?.data?.message || "Failed to fetch profile");
           }
-        } else if (error instanceof Error) {
-          toast.error(error.message);
         } else {
           toast.error("Failed to fetch profile");
         }
@@ -79,35 +84,8 @@ export default function ProfilePage() {
       }
     };
 
-    fetchProfile();
+    init();
   }, [router]);
-
-  const handleUpload = async () => {
-    if (!file) {
-      toast.error('No file selected');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('profilePicture', file);
-
-    setUploading(true);
-    try {
-      await api.post('/users/upload-profile-picture', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      toast.success('Profile picture updated!');
-      // refetch profile
-      const res = await api.get("/auth/profile");
-      setProfile(res.data.data);
-    } catch (error) {
-      toast.error('Upload failed');
-    } finally {
-      setUploading(false);
-    }
-  };
 
   if (loading) return <p className="text-center mt-10">Loading...</p>;
   if (!profile) return null;
@@ -119,7 +97,7 @@ export default function ProfilePage() {
           <div className="w-20 h-20 rounded-full bg-muted overflow-hidden">
             {profile.profilePicture ? (
               <img
-                src={`http://localhost:8000${profile.profilePicture}`}
+                src={profile.profilePicture}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
@@ -132,18 +110,13 @@ export default function ProfilePage() {
         </CardHeader>
 
         <CardContent className="grid gap-5 relative">
-          {/* Upload Foto */}
-          <div>
-            <Label className="mb-2 block">Change Profile Picture</Label>
-            <div className="flex items-center gap-4">
-              <Input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-              <Button onClick={handleUpload} disabled={uploading}>
-                {uploading ? 'Uploading...' : 'Upload'}
-              </Button>
-            </div>
-          </div>
+          {/* Upload Profile Picture */}
+          <ProfilePictureUploader
+            currentPicture={profile.profilePicture}
+            onUpload={fetchProfile}
+          />
 
-          {/* Hanya CUSTOMER yang bisa lihat referral & kupon */}
+          {/* Only CUSTOMER can see these */}
           {role === 'CUSTOMER' && (
             <>
               <div>
@@ -188,7 +161,6 @@ export default function ProfilePage() {
             </>
           )}
 
-          {/* Reset password */}
           <div>
             <Label className="mb-2 block">Password</Label>
             <Input type="password" value="********" disabled />
