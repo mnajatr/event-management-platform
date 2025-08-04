@@ -1,14 +1,15 @@
-// types/express/index.d.ts
-import "express";
+import { UserRole } from "../../generated/prisma";
 
 declare global {
   namespace Express {
-    interface Request {
+    export interface Request {
       user?: {
         id: number;
         email: string;
-        role: string;
+        role: UserRole;
       };
     }
   }
 }
+
+export {};
