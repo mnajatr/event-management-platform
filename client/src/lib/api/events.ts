@@ -7,6 +7,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 interface IGetEventsParams {
   category?: string;
   search?: string;
+  location?: string;
 }
 
 export const getEvents = async (

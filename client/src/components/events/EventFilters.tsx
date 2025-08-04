@@ -25,15 +25,19 @@ const categories = [
 interface EventFiltersProps {
   initialSearch: string;
   initialCategory: string;
+  initialLocation: string;
   onSearchChange: (term: string) => void;
   onCategoryChange: (category: string) => void;
+  onLocationChange: (location: string) => void;
 }
 
 export const EventFilters = ({
   initialSearch,
   initialCategory,
+  initialLocation,
   onSearchChange,
   onCategoryChange,
+  onLocationChange,
 }: EventFiltersProps) => {
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-8">
@@ -42,6 +46,11 @@ export const EventFilters = ({
         defaultValue={initialSearch}
         onChange={(e) => onSearchChange(e.target.value)}
         className="md:w-1/2"
+      />
+      <Input
+        placeholder="Cari lokasi..."
+        defaultValue={initialLocation}
+        onChange={(e) => onLocationChange(e.target.value)}
       />
       <Select
         onValueChange={(value) =>
