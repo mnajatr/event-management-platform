@@ -75,45 +75,12 @@ export class EventService {
     return event;
   }
 
-  private async verifyEventOwner(eventId: number, organizerId: number) {
-    const event = await prisma.event.findUnique({
-      where: { id: eventId },
+  async findEventsByOrganizer(organizerId: number) {
+    return prisma.event.findMany({
+      where: { organizerId },
+      include: {
+        ticketTypes: true,
+      },
     });
-
-    if (!event) {
-      throw new AppError("Event tidak ditemukan.", 404);
-    }
-
-    if (event.organizerId !== organizerId) {
-      throw new AppError("Anda tidak memiliki akses ke event ini.", 403);
-    }
-  }
-
-  async updateEvent(
-    eventId: number,
-    organizerId: number,
-    data: Prisma.EventUpdateInput
-  ) {
-    await this.verifyEventOwner(eventId, organizerId);
-    return await prisma.event.update({
-      where: { id: eventId },
-      data,
-    });
-  }
-
-  async deleteEvent(eventId: number, organizerId: number) {
-    await this.verifyEventOwner(eventId, organizerId);
-    return await prisma.event.delete({
-      where: { id: eventId },
-    });
-  }
-
-  async findEventByOrganizer(organizerId: number) {
-    return await prisma.event.findMany({
-      where: {organizerId},
-      orderBy: {
-        startDate: 'desc' // urutan dari yang paling baru
-      }
-    })
   }
 }

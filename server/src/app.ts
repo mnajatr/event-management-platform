@@ -8,6 +8,8 @@ import { errorMiddleware } from "./middlewares/error.middleware";
 import userRoutes from "./routes/user.routes";
 import logger from "./utils/logger";
 import voucherRouters from "./routes/voucher.routes";
+import organizerRouter from "./routes/organizer.route";
+import statisticRouter from "./routes/statistic.routes"
 import path from "path";
 
 class App {
@@ -49,6 +51,8 @@ class App {
     this.app.use("/api/vouchers", voucherRouters);
     this.app.use("/api/users", userRoutes); 
     this.app.use('/uploads', express.static('uploads'));
+    this.app.use("/api/organizers", organizerRouter)
+    this.app.use("/api/statistics", statisticRouter)
 ;
 
     // Handle 404 - Must be AFTER all routes

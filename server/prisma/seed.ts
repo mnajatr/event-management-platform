@@ -29,20 +29,35 @@ async function main() {
   const saltRounds = 10;
   const password = await bcrypt.hash("Password123!", saltRounds);
 
-  const organizers = await Promise.all(
-    Array.from({ length: 3 }).map(() =>
-      prisma.user.create({
-        data: {
-          email: faker.internet.email().toLowerCase(),
-          password: password,
-          fullName: faker.company.name(),
-          role: UserRole.ORGANIZER,
-          referralCode: faker.string.alphanumeric(8).toUpperCase(),
-          profilePicture: faker.image.avatar(),
-        },
-      })
-    )
-  );
+  // Tambahan: 1 organizer tetap
+  const fixedOrganizer = await prisma.user.create({
+    data: {
+      email: "eo@example.com",
+      password: password,
+      fullName: "Captiera EO",
+      role: UserRole.ORGANIZER,
+      referralCode: faker.string.alphanumeric(8).toUpperCase(),
+      profilePicture: faker.image.avatar(),
+    },
+  });
+
+  const organizers = [
+    fixedOrganizer,
+    ...(await Promise.all(
+      Array.from({ length: 2 }).map(() =>
+        prisma.user.create({
+          data: {
+            email: faker.internet.email().toLowerCase(),
+            password: password,
+            fullName: faker.company.name(),
+            role: UserRole.ORGANIZER,
+            referralCode: faker.string.alphanumeric(8).toUpperCase(),
+            profilePicture: faker.image.avatar(),
+          },
+        })
+      )
+    )),
+  ];
 
   console.log(`Created ${organizers.length} organizers. 🧑‍💼`);
 

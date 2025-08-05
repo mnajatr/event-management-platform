@@ -1,43 +1,30 @@
-// src/app/dashboard/organizer/page.tsx
-'use client';
+"use client";
 
-import ProtectedPage from '@/components/auth/ProtectedPage';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DashboardContent } from "@/components/dashboard/DashboardContent";
+import { DashboardStatistics } from "@/components/dashboard/DashboardStatistics";
+import ProtectedPage from "@/components/auth/ProtectedPage";
 
-export default function OrganizerDashboardPage() {
+export default function DashboardPage() {
   return (
-    <ProtectedPage allowedRoles={['ORGANIZER']}>
-      <div className="max-w-6xl mx-auto py-10 px-4 space-y-6">
-        <h1 className="text-3xl font-bold">Welcome, Organizer!</h1>
+    <ProtectedPage allowedRoles={["ORGANIZER"]}>
+      <div className="p-6">
+        <h1 className="text-2xl font-bold mb-6">Organizer Dashboard</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Total Events</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-semibold">12</p>
-            </CardContent>
-          </Card>
+        <Tabs defaultValue="summary" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="summary">📋 Summary</TabsTrigger>
+            <TabsTrigger value="statistics">📊 Statistics</TabsTrigger>
+          </TabsList>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Active Events</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-semibold">4</p>
-            </CardContent>
-          </Card>
+          <TabsContent value="summary">
+            <DashboardContent />
+          </TabsContent>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Tickets Sold</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-semibold">1,245</p>
-            </CardContent>
-          </Card>
-        </div>
+          <TabsContent value="statistics">
+            <DashboardStatistics />
+          </TabsContent>
+        </Tabs>
       </div>
     </ProtectedPage>
   );

@@ -1,9 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { EventService } from "../services/event.service";
-import {
-  createEventSchema,
-  updateEventSchema,
-} from "../validators/event.validator";
+import { createEventSchema } from "../validators/event.validator";
 import { AppError } from "../errors/app.error";
 
 const eventService = new EventService();
@@ -14,7 +11,7 @@ export class EventController {
       // Validasi body request
       const validatedData = createEventSchema.parse(req.body);
 
-      const organizerId = req.user!.id; // Placeholder, ganti dengan logic auth nanti
+      const organizerId = 1; // Placeholder, ganti dengan logic auth nanti
 
       const newEvent = await eventService.createEvent({
         ...validatedData,
@@ -65,47 +62,15 @@ export class EventController {
     }
   }
 
-  async updateEvent(req: Request, res: Response, next: NextFunction) {
-    try {
-      const eventId = Number(req.params.id);
-      const organizerId = req.user!.id;
-      const validatedData = updateEventSchema.parse(req.body);
-
-      const updatedEvent = await eventService.updateEvent(
-        eventId,
-        organizerId,
-        validatedData
-      );
-
-      res.status(200).json({
-        message: "Event berhasil dibuat.",
-        data: this.updateEvent,
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async deleteEvent(req: Request, res: Response, next: NextFunction) {
-    try {
-      const eventId = Number(req.params.id);
-      const organizerId = req.user!.id;
-
-      await eventService.deleteEvent(eventId, organizerId);
-
-      res.status(200).json({ message: "Event berhasil dibuat." });
-    } catch (error) {
-      next(error);
-    }
-  }
-
   async getMyEvents(req: Request, res: Response, next: NextFunction) {
     try {
-      const organizerId = req.user!.id;
-      const events = await eventService.findEventByOrganizer(organizerId);
+      const organizerId = req.user?.id;
+      if (!organizerId) throw new AppError("Unauthorized", 401);
+
+      const events = await eventService.findEventsByOrganizer(organizerId);
 
       res.status(200).json({
-        message: "Events by organizer fetched succesfully.",
+        message: "Organizer's events fetched successfully",
         data: events,
       });
     } catch (error) {
