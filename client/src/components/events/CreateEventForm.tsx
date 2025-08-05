@@ -19,35 +19,53 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { eventCategories } from "@/constants/event";
-import { createEvent } from "@/lib/api/events";
+import { createEvent, updateEvent } from "@/lib/api/events";
 import {
   createEventSchema,
   TCreateEventPayload,
   TCreateEventSchema,
 } from "@/lib/validators/createEvent.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { DatePickerFormField } from "./DatePickerFormField";
 import { toast } from "sonner";
+import { TEvent } from "@/types/event.type";
 
-export const CreateEventForm = () => {
+interface CreateEventFormProps {
+  initialData?: TEvent;
+}
+
+export const CreateEventForm = ({ initialData }: CreateEventFormProps) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const isEditMode = !!initialData;
 
   const form = useForm<TCreateEventSchema>({
     resolver: zodResolver(createEventSchema),
-    defaultValues: {
-      name: "",
-      category: "TECHNOLOGY",
-      location: "",
-      description: "",
-      basePrice: "0",
-      totalSeats: "1",
-    },
+    defaultValues: isEditMode
+      ? {
+          name: initialData.name,
+          category: initialData.category,
+          location: initialData.location,
+          description: initialData.description,
+          startDate: new Date(initialData.startDate),
+          endDate: new Date(initialData.endDate),
+          basePrice: String(initialData.basePrice),
+          totalSeats: String(initialData.availableSeats),
+        }
+      : {
+          name: "",
+          category: "TECHNOLOGY",
+          location: "",
+          description: "",
+          basePrice: "1",
+          totalSeats: "1",
+        },
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutate: perfomeCreate, isPending: isCreating } = useMutation({
     mutationFn: createEvent,
     onSuccess: (data) => {
       toast.success("Event berhasil dibuat!");
@@ -60,17 +78,37 @@ export const CreateEventForm = () => {
     },
   });
 
+  const { mutate: performUpdate, isPending: isUpdating } = useMutation({
+    mutationFn: updateEvent,
+    onSuccess: (data) => {
+      toast.success("Event berhasil diperbarui!");
+      queryClient.invalidateQueries({ queryKey: ["my-events"] });
+      router.push("/dashboard/my-events");
+    },
+    onError: (error) => {
+      toast.error("Gagal memperbarui event.", {
+        description: error.message,
+      });
+    },
+  });
+
   function onSubmit(values: TCreateEventSchema) {
     const tranformedValues: TCreateEventPayload = {
       ...values,
       basePrice: Number(values.basePrice),
       totalSeats: Number(values.totalSeats),
     };
-    mutate(tranformedValues);
+    if (isEditMode) {
+      performUpdate({ eventId: initialData.id, data: tranformedValues });
+    } else {
+      perfomeCreate(tranformedValues);
+    }
   }
 
+  const isPending = isCreating || isUpdating;
+
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
@@ -170,9 +208,15 @@ export const CreateEventForm = () => {
           />
         </div>
         <Button type="submit" disabled={isPending}>
-          {isPending ? "Membuat Event..." : "Buat Event"}
+          {isPending
+            ? isEditMode
+              ? "Memperbarui..."
+              : "Membuat..."
+            : isEditMode
+              ? "Simpan perubahan"
+              : "Buat Event"}
         </Button>
       </form>
-    </Form>
+    </FormProvider>
   );
 };

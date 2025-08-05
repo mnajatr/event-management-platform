@@ -42,3 +42,5 @@ export type TCreateEventPayload = Omit<
   basePrice: number;
   totalSeats: number;
 };
+
+export type TUpdateEventPayload = Partial<TCreateEventPayload>;
