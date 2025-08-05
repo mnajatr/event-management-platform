@@ -41,7 +41,7 @@ export function authMiddleware(
   }
 }
 
-export function roleMiddleware(allowedRoles: string[]) {
+export function roleMiddleware(allowedRoles: UserRole[]) {
   return (request: Request, response: Response, next: NextFunction) => {
     const user = request.user;
     if (!user) {
@@ -55,37 +55,3 @@ export function roleMiddleware(allowedRoles: string[]) {
     next();
   };
 }
-
-export const protect = (
-  request: Request,
-  response: Response,
-  next: NextFunction
-) => {
-  const token = request.header("Authorization")?.replace("Bearear ", "");
-
-  if (!token) {
-    throw new AppError("Akses ditolak, tidak ada token.", 401);
-  }
-
-  try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || "your_default_secret"
-    );
-    request.user = decoded as Express.Request["user"];
-    next();
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const authorize = (roles: UserRole[]) => {
-  return (request: Request, response: Response, next: NextFunction) => {
-    if (!request.user || !roles.includes(request.user.role)) {
-      throw new AppError(
-        "Anda tidak memiliki hak akses untuk sumber daya ini."
-      );
-    }
-    next();
-  };
-};

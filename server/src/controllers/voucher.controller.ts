@@ -10,7 +10,7 @@ export class VoucherController {
     try {
       const validatedData = createVoucherSchema.parse(req.body);
 
-      const organizerId = 1; // nanti akan diganti
+      const organizerId = req.user!.id; // nanti akan diganti
 
       const newVoucher = await voucheService.createVoucher(
         organizerId,
