@@ -7,21 +7,16 @@ const eventRouter = Router();
 const eventController = new EventController();
 const organizerOnly = [authMiddleware, roleMiddleware([UserRole.ORGANIZER])];
 
-// GET /api/events/my-events Public
+// Rute GET /api/events/my-events (harus diletakkan SEBELUM /:id)
 eventRouter.get("/my-events", organizerOnly, eventController.getMyEvents);
 
-// GET /api/events -> Mendapatkan semua event (dengan filter)
+// Rute GET publik
 eventRouter.get("/", eventController.getAllEvents);
-// GET /api/events/:id -> Mendapatkan detail satu event
 eventRouter.get("/:id", eventController.getEventById);
 
-// POST /api/events -> Membuat event baru
+// Rute yang diproteksi
 eventRouter.post("/", organizerOnly, eventController.createEvent);
-
-// PUT
 eventRouter.put("/:id", organizerOnly, eventController.updateEvent);
-
-// DELETE
-eventRouter.delete(":/id", organizerOnly, eventController.deleteEvent);
+eventRouter.delete("/:id", organizerOnly, eventController.deleteEvent);
 
 export default eventRouter;
