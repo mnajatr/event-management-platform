@@ -52,3 +52,12 @@ export const getMyEvents = async (): Promise<TEvent[]> => {
     throw new Error("Gagal mengambil data event Anda");
   }
 };
+
+export const deleteEvent = async (eventId: number): Promise<void> => {
+  try {
+    await api.delete(`/event/${eventId}`);
+  } catch (error) {
+    console.error("Failed to delete event:", error);
+    throw new Error("Gagal membuat event.");
+  }
+};
