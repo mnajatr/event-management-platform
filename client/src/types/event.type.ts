@@ -1,3 +1,5 @@
+import { eventCategories } from "@/constants/event";
+
 export type TEventStatus =
   | "DRAFT"
   | "PUBLISHED"
@@ -13,7 +15,7 @@ export type TEvent = {
   id: number;
   name: string;
   description: string;
-  category: string;
+  category: (typeof eventCategories)[number];
   location: string;
   startDate: string; // ISO date string
   endDate: string; // ISO date string

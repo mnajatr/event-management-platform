@@ -1,6 +1,9 @@
 import api from "../axios";
 import { TEvent, TEventDetail } from "@/types/event.type";
-import { TCreateEventPayload } from "../validators/createEvent.schema";
+import {
+  TCreateEventPayload,
+  TUpdateEventPayload,
+} from "../validators/createEvent.schema";
 
 interface IGetEventsParams {
   category?: string;
@@ -59,5 +62,24 @@ export const deleteEvent = async (eventId: number): Promise<void> => {
   } catch (error) {
     console.error("Failed to delete event:", error);
     throw new Error("Gagal membuat event.");
+  }
+};
+
+export const updateEvent = async ({
+  eventId,
+  data,
+}: {
+  eventId: number;
+  data: TUpdateEventPayload;
+}): Promise<TEvent> => {
+  try {
+    const response = await api.put<{ data: TEvent }>(
+      `/events/${eventId}`,
+      data
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error("Failed to update event:", data);
+    throw new Error("Gagla membuat event.");
   }
 };
