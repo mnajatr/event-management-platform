@@ -11,7 +11,7 @@ export class EventController {
       // Validasi body request
       const validatedData = createEventSchema.parse(req.body);
 
-      const organizerId = 1; // Placeholder, ganti dengan logic auth nanti
+      const organizerId = req.user!.id; // Placeholder, ganti dengan logic auth nanti
 
       const newEvent = await eventService.createEvent({
         ...validatedData,
