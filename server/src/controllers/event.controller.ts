@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { EventService } from "../services/event.service";
-import { createEventSchema } from "../validators/event.validator";
+import {
+  createEventSchema,
+  updateEventSchema,
+} from "../validators/event.validator";
 import { AppError } from "../errors/app.error";
 
 const eventService = new EventService();
@@ -57,6 +60,40 @@ export class EventController {
         message: "Event fetched successfully! 🎊",
         data: event,
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateEvent(req: Request, res: Response, next: NextFunction) {
+    try {
+      const eventId = Number(req.params.id);
+      const organizerId = req.user!.id;
+      const validatedData = updateEventSchema.parse(req.body);
+
+      const updatedEvent = await eventService.updateEvent(
+        eventId,
+        organizerId,
+        validatedData
+      );
+
+      res.status(200).json({
+        message: "Event berhasil dibuat.",
+        data: this.updateEvent,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteEvent(req: Request, res: Response, next: NextFunction) {
+    try {
+      const eventId = Number(req.params.id);
+      const organizerId = req.user!.id;
+
+      await eventService.deleteEvent(eventId, organizerId);
+
+      res.status(200).json({ message: "Event berhasil dibuat." });
     } catch (error) {
       next(error);
     }

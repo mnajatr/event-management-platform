@@ -16,4 +16,10 @@ eventRouter.get("/:id", eventController.getEventById);
 // POST /api/events -> Membuat event baru
 eventRouter.post("/", organizerOnly, eventController.createEvent);
 
+// PUT
+eventRouter.put("/:id", organizerOnly, eventController.updateEvent);
+
+// DELETE
+eventRouter.delete(":/id", organizerOnly, eventController.deleteEvent);
+
 export default eventRouter;
