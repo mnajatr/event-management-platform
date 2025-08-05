@@ -1,3 +1,10 @@
+export type TEventStatus =
+  | "DRAFT"
+  | "PUBLISHED"
+  | "ONGOING"
+  | "COMPLETED"
+  | "CANCELLED";
+
 export type TOrganizer = {
   fullName: string;
 };
@@ -14,6 +21,7 @@ export type TEvent = {
   availableSeats: number;
   imageUrl: string | null; // URL to the event image, can be null if no image is provided
   organizer: TOrganizer;
+  status: TEventStatus;
 };
 
 export type TTicketType = {
