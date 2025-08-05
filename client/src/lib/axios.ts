@@ -1,4 +1,3 @@
-// src/lib/axios.ts
 import axios from "axios";
 
 const api = axios.create({
@@ -8,9 +7,12 @@ const api = axios.create({
 // Tambahkan token otomatis
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // HANYA jalankan kode ini jika kita berada di lingkungan browser
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },
@@ -22,7 +24,10 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.clear(); // cukup clear token
+      // HANYA jalankan kode ini jika kita berada di lingkungan browser
+      if (typeof window !== "undefined") {
+        localStorage.clear(); // cukup clear token
+      }
       // jangan redirect dari sini ya
     }
     return Promise.reject(err);
