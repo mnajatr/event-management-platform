@@ -98,4 +98,18 @@ export class EventController {
       next(error);
     }
   }
+
+  async getMyEvents(req: Request, res: Response, next: NextFunction) {
+    try {
+      const organizerId = req.user!.id;
+      const events = await eventService.findEventByOrganizer(organizerId);
+
+      res.status(200).json({
+        message: "Events by organizer fetched succesfully.",
+        data: events,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

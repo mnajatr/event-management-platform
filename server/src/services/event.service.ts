@@ -107,4 +107,13 @@ export class EventService {
       where: { id: eventId },
     });
   }
+
+  async findEventByOrganizer(organizerId: number) {
+    return await prisma.event.findMany({
+      where: {organizerId},
+      orderBy: {
+        startDate: 'desc' // urutan dari yang paling baru
+      }
+    })
+  }
 }

@@ -7,9 +7,11 @@ const eventRouter = Router();
 const eventController = new EventController();
 const organizerOnly = [authMiddleware, roleMiddleware([UserRole.ORGANIZER])];
 
+// GET /api/events/my-events Public
+eventRouter.get("/my-events", organizerOnly, eventController.getMyEvents);
+
 // GET /api/events -> Mendapatkan semua event (dengan filter)
 eventRouter.get("/", eventController.getAllEvents);
-
 // GET /api/events/:id -> Mendapatkan detail satu event
 eventRouter.get("/:id", eventController.getEventById);
 
