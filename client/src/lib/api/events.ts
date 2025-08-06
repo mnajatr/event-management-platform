@@ -27,7 +27,7 @@ export const getEvents = async (
 
 export const getEventById = async (id: number): Promise<TEventDetail> => {
   try {
-    const response = await api.get<{ data: TEventDetail }>("/events/${id}");
+    const response = await api.get<{ data: TEventDetail }>(`/events/${id}`);
     return response.data.data;
   } catch (error) {
     throw new Error("Failed to fetch event details");
