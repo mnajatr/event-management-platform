@@ -41,15 +41,15 @@ export default function MyEventsPage() {
     isLoading,
     isError,
     error,
-  } = useQuery({
+  } = useQuery<TEvent[]>({
     queryKey: ["my-events"],
     queryFn: getMyEvents,
   });
 
-  const { mutate: perfomDelete, isPending: isDeleting } = useMutation({
+  const { mutate: performDelete, isPending: isDeleting } = useMutation({
     mutationFn: deleteEvent,
     onSuccess: () => {
-      toast.success("Event berhasil dibuat.");
+      toast.success("Event berhasil dihapus.");
       queryClient.invalidateQueries({ queryKey: ["my-events"] });
       setIsDeleteDialogOpen(false);
     },
@@ -61,14 +61,14 @@ export default function MyEventsPage() {
     },
   });
 
-  const handleClick = (event: TEvent) => {
+  const handleDeleteClick = (event: TEvent) => {
     setSelectedEvent(event);
     setIsDeleteDialogOpen(true);
   };
 
   const confirmDelete = () => {
     if (selectedEvent) {
-      perfomDelete(selectedEvent.id);
+      performDelete(selectedEvent.id);
     }
   };
 
@@ -110,21 +110,26 @@ export default function MyEventsPage() {
                   <TableRow key={event.id}>
                     <TableCell className="font-medium">{event.name}</TableCell>
                     <TableCell>
-                      {dayjs(event.startDate).format("DD MM YYYY")}
+                      {dayjs(event.startDate).format("DD MMM YYYY")}
+                    </TableCell>
+                    <TableCell>
+                      {event.basePrice > 0
+                        ? event.basePrice.toLocaleString("id-ID")
+                        : "Gratis"}
                     </TableCell>
                     <TableCell>
                       <Badge>{event.status}</Badge>
                     </TableCell>
                     <TableCell className="text-right space-x-2">
-                      <Button variant={"outline"} size={"icon"} asChild>
-                        <Link href={`/dashboard/events/${event.id}`}>
+                      <Button variant="outline" size="icon" asChild>
+                        <Link href={`/dashboard/events/edit/${event.id}`}>
                           <Pencil className="h-4 w-4" />
                         </Link>
                       </Button>
                       <Button
-                        variant={"destructive"}
-                        size={"icon"}
-                        onClick={() => handleClick(event)}
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => handleDeleteClick(event)}
                         disabled={isDeleting}
                       >
                         <Trash2 className="h-4 w-4" />
