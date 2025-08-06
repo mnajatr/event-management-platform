@@ -102,18 +102,18 @@ export class EventService {
   }
 
   async deleteEvent(eventId: number, organizerId: number) {
-    await this.verifyEventOwner(eventId, organizerId);
+    await this.verifyEventOwner(eventId, organizerId); // Verifikasi kepemilikan
     return await prisma.event.delete({
       where: { id: eventId },
     });
   }
 
-  async findEventByOrganizer(organizerId: number) {
+  async findEventsByOrganizer(organizerId: number) {
     return await prisma.event.findMany({
-      where: {organizerId},
+      where: { organizerId },
       orderBy: {
-        startDate: 'desc' // urutan dari yang paling baru
-      }
-    })
+        startDate: "desc", // urutan dari yang paling baru
+      },
+    });
   }
 }

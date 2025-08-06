@@ -79,7 +79,7 @@ export class EventController {
 
       res.status(200).json({
         message: "Event berhasil dibuat.",
-        data: this.updateEvent,
+        data: updatedEvent,
       });
     } catch (error) {
       next(error);
@@ -93,7 +93,7 @@ export class EventController {
 
       await eventService.deleteEvent(eventId, organizerId);
 
-      res.status(200).json({ message: "Event berhasil dibuat." });
+      res.status(200).json({ message: "Event berhasil dihapus." });
     } catch (error) {
       next(error);
     }
@@ -102,7 +102,7 @@ export class EventController {
   async getMyEvents(req: Request, res: Response, next: NextFunction) {
     try {
       const organizerId = req.user!.id;
-      const events = await eventService.findEventByOrganizer(organizerId);
+      const events = await eventService.findEventsByOrganizer(organizerId);
 
       res.status(200).json({
         message: "Events by organizer fetched succesfully.",

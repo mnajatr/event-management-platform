@@ -58,7 +58,7 @@ export const getMyEvents = async (): Promise<TEvent[]> => {
 
 export const deleteEvent = async (eventId: number): Promise<void> => {
   try {
-    await api.delete(`/event/${eventId}`);
+    await api.delete(`/events/${eventId}`);
   } catch (error) {
     console.error("Failed to delete event:", error);
     throw new Error("Gagal membuat event.");
@@ -80,6 +80,6 @@ export const updateEvent = async ({
     return response.data.data;
   } catch (error) {
     console.error("Failed to update event:", data);
-    throw new Error("Gagla membuat event.");
+    throw new Error("Gagal membuat event.");
   }
 };
