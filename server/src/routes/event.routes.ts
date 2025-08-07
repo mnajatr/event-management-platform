@@ -1,12 +1,16 @@
 import { Router } from "express";
 import { EventController } from "../controllers/event.controller";
-import { authMiddleware, roleMiddleware } from "../middlewares/auth.middleware";
+import { authMiddleware,requireOrganizer, roleMiddleware } from "../middlewares/auth.middleware";
 
 const eventRouter = Router();
 const eventController = new EventController();
 
 // POST /api/events -> Membuat event baru
-eventRouter.post("/", eventController.createEvent);
+eventRouter.post("/",
+  authMiddleware,         // <-- WAJIB ADA
+  requireOrganizer,       // <-- Jika hanya organizer yang boleh
+  eventController.createEvent.bind(eventController)
+);
 
 // GET /api/events -> Mendapatkan semua event (dengan filter)
 eventRouter.get("/", eventController.getAllEvents);

@@ -28,7 +28,8 @@ export class EventController {
         data: newEvent,
       });
     } catch (error) {
-      next(error);
+      console.error("EventController error:", error);
+      res.status(500).json({ message: error instanceof Error ? error.message : String(error) });
     }
   }
 
@@ -41,7 +42,8 @@ export class EventController {
         data: events,
       });
     } catch (error) {
-      next(error);
+      console.error("EventController error:", error);
+      res.status(500).json({ message: error instanceof Error ? error.message : String(error) });
     }
   }
 
