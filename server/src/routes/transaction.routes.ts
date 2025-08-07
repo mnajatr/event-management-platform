@@ -1,26 +1,18 @@
-import express from "express";
-import {
-  getTransactionsByEvent, updateTransactionStatus
-} from "../controllers/transaction.controller";
-import {
-  authMiddleware as verifyToken,
-  requireOrganizer,
-} from "../middlewares/auth.middleware";
+import { Router } from "express";
+import { TransactionController } from "../controllers/transaction.controller";
+import { authMiddleware, roleMiddleware } from "../middlewares/auth.middleware";
+import { UserRole } from "../generated/prisma";
 
-const router = express.Router();
+const transactionRouter = Router();
+const transactionController = new TransactionController();
 
-router.get(
-  "/events/:eventId/transactions",
-  verifyToken,
-  requireOrganizer,
-  getTransactionsByEvent
+// Hanya customer yang sudah login yang bisa membuat transaksi
+const customerOnly = [authMiddleware, roleMiddleware([UserRole.CUSTOMER])];
+
+transactionRouter.post(
+  "/",
+  customerOnly,
+  transactionController.createTransaction
 );
 
-router.patch(
-  "/transactions/:transactionId",
-  verifyToken,
-  requireOrganizer,
-  updateTransactionStatus
-);
-
-export default router;
+export default transactionRouter;
