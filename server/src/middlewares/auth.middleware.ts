@@ -31,7 +31,7 @@ export function authMiddleware(
       decoded.role as UserRole
     );
     if (!isValidRole) {
-      throw new AppError("Invalid not specified in token", 401);
+      throw new AppError("Invalid role specified in token", 401);
     }
 
     request.user = decoded as { id: number; email: string; role: UserRole };
@@ -55,3 +55,6 @@ export function roleMiddleware(allowedRoles: UserRole[]) {
     next();
   };
 }
+
+// ✅ Tambahan ini:
+export const requireOrganizer = roleMiddleware([UserRole.ORGANIZER]);
