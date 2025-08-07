@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { EventService } from "../services/event.service";
-import { createEventSchema } from "../validators/event.validator";
+import {
+  createEventSchema,
+  updateEventSchema,
+} from "../validators/event.validator";
 import { AppError } from "../errors/app.error";
 import prisma from "../prisma";
 
@@ -12,7 +15,7 @@ export class EventController {
       // Validasi body request
       const validatedData = createEventSchema.parse(req.body);
 
-      const organizerId = 1; // Placeholder, ganti dengan logic auth nanti
+      const organizerId = req.user!.id; // Placeholder, ganti dengan logic auth nanti
 
       const newEvent = await eventService.createEvent({
         ...validatedData,
@@ -63,63 +66,51 @@ export class EventController {
     }
   }
 
-  async getMyEvents(req: Request, res: Response, next: NextFunction) {
+  async updateEvent(req: Request, res: Response, next: NextFunction) {
     try {
-      const organizerId = req.user?.id;
-      if (!organizerId) throw new AppError("Unauthorized", 401);
+      const eventId = Number(req.params.id);
+      const organizerId = req.user!.id;
+      const validatedData = updateEventSchema.parse(req.body);
 
-      const events = await eventService.findEventsByOrganizer(organizerId);
+      const updatedEvent = await eventService.updateEvent(
+        eventId,
+        organizerId,
+        validatedData
+      );
 
       res.status(200).json({
-        message: "Organizer's events fetched successfully",
-        data: events,
+        message: "Event berhasil dibuat.",
+        data: updatedEvent,
       });
     } catch (error) {
       next(error);
     }
   }
 
-  async updateEvent(req: Request, res: Response) {
-    const { id } = req.params;
-    //yang ini aku hardcode dulu belum di validasi
+  async deleteEvent(req: Request, res: Response, next: NextFunction) {
     try {
-      const rawData = req.body;
+      const eventId = Number(req.params.id);
+      const organizerId = req.user!.id;
 
-      const data = {
-        name: rawData.name,
-        description: rawData.description,
-        location: rawData.location,
-        category: rawData.category,
-        startDate: rawData.startDate ? new Date(rawData.startDate) : undefined,
-        endDate: rawData.endDate ? new Date(rawData.endDate) : undefined,
-        basePrice: rawData.basePrice ? Number(rawData.basePrice) : undefined,
-        availableSeats: rawData.availableSeats
-          ? Number(rawData.availableSeats)
-          : undefined,
-      };
+      await eventService.deleteEvent(eventId, organizerId);
 
-      // Filter undefined supaya tidak mengubah field yang tidak disubmit
-      const cleanData = Object.fromEntries(
-        Object.entries(data).filter(([_, v]) => v !== undefined)
-      );
+      res.status(200).json({ message: "Event berhasil dihapus." });
+    } catch (error) {
+      next(error);
+    }
+  }
 
-      const updatedEvent = await prisma.event.update({
-        where: { id: Number(id) },
-        data: cleanData,
-      });
+  async getMyEvents(req: Request, res: Response, next: NextFunction) {
+    try {
+      const organizerId = req.user!.id;
+      const events = await eventService.findEventByOrganizer(organizerId);
 
-      return res.status(200).json({
-        status: "success",
-        message: "Event updated successfully",
-        data: updatedEvent,
+      res.status(200).json({
+        message: "Events by organizer fetched succesfully.",
+        data: events,
       });
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({
-        status: "error",
-        message: "Failed to update event",
-        error: String(error),
-      });
+      next(error);
     }
   }
 

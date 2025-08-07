@@ -62,6 +62,7 @@ export const DashboardContent = () => {
             {summary?.successfulTransactions ?? "-"}
           </p>
         </div>
+
         <div className="bg-white p-4 rounded shadow">
           <p className="text-sm text-gray-500">Revenue</p>
           <p className="text-xl font-semibold">
