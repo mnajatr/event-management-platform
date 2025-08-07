@@ -11,7 +11,8 @@ import voucherRouters from "./routes/voucher.routes";
 import organizerRouter from "./routes/organizer.route";
 import statisticRouter from "./routes/statistic.routes";
 import attendeeRoutes from "./routes/attendees.routes";
-import transactionRoutes from "./routes/transaction.routes";
+import organizerTransactionRoutes from "./routes/organizer/transaction.routes";
+import systemTransactionRoutes from "./routes/system/transaction.routes";
 
 import path from "path";
 
@@ -58,6 +59,9 @@ class App {
     this.app.use("/api/statistics", statisticRouter);
     this.app.use("/api/organizers", attendeeRoutes);
     this.app.use("/api/transactions", transactionRoutes);
+    this.app.use("/api/organizers", organizerTransactionRoutes);
+    this.app.use("/api/system", systemTransactionRoutes);
+
 
     // Handle 404 - Must be AFTER all routes
     this.app.use(notFoundMiddleware);

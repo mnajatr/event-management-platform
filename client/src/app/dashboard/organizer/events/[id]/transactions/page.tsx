@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import api from "@/lib/axios";
-import { TransactionCard } from "@/components/transaction/TransactionCard";
 import { Transaction, TransactionStatus } from "@/types/transaction.type";
-import { toast } from "sonner"; // pastikan kamu sudah install sonner
+import { TransactionCard } from "@/components/transaction/TransactionCard";
+import { toast } from "sonner";
 
 export default function TransactionPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -31,8 +31,10 @@ export default function TransactionPage() {
 
   const handleStatusChange = async (id: number, newStatus: TransactionStatus) => {
     try {
-      await api.patch(`/organizers/transactions/${id}`, { status: newStatus });
-      toast.success("Status updated!");
+      await api.patch(`/organizers/transactions/${id}`, {
+        status: newStatus,
+      });
+      toast.success("Status updated");
 
       setTransactions((prev) =>
         prev.map((txn) =>
@@ -56,12 +58,13 @@ export default function TransactionPage() {
         transactions.map((txn) => (
           <TransactionCard
             key={txn.id}
+            id={txn.id}
             customer={txn.customer}
             quantity={txn.quantity}
             finalAmount={txn.finalAmount}
             status={txn.status}
             paymentProof={txn.paymentProof}
-            onStatusChange={(newStatus) => handleStatusChange(txn.id, newStatus)}
+            onStatusChange={handleStatusChange}
           />
         ))
       )}

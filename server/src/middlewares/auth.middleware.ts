@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { AppError } from "../errors/app.error.js";
 import { UserRole } from "../generated/prisma";
 import { JWTUtil } from "../utils/jwt";
-import jwt from "jsonwebtoken";
 
 export function authMiddleware(
   request: Request,
@@ -56,5 +55,5 @@ export function roleMiddleware(allowedRoles: UserRole[]) {
   };
 }
 
-// ✅ Tambahan ini:
+// ✅ EO only
 export const requireOrganizer = roleMiddleware([UserRole.ORGANIZER]);

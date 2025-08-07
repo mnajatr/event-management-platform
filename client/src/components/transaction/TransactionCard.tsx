@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectTrigger,
@@ -11,7 +10,9 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import { TransactionStatus } from "@/types/transaction.type";
+
 type TransactionCardProps = {
+  id: number;
   customer: {
     fullName: string;
     email: string;
@@ -21,10 +22,11 @@ type TransactionCardProps = {
   finalAmount: number;
   status: TransactionStatus;
   paymentProof?: string | null;
-  onStatusChange?: (newStatus: TransactionStatus) => void;
+  onStatusChange?: (id: number, newStatus: TransactionStatus) => void;
 };
 
 export const TransactionCard = ({
+  id,
   customer,
   quantity,
   finalAmount,
@@ -50,19 +52,15 @@ export const TransactionCard = ({
           <Select
             value={status}
             onValueChange={(value) =>
-              onStatusChange?.(value as TransactionStatus)
+              onStatusChange?.(id, value as TransactionStatus)
             }
           >
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="PENDING">PENDING</SelectItem>
-              <SelectItem value="WAITING_PAYMENT">WAITING_PAYMENT</SelectItem>
               <SelectItem value="PAID">PAID</SelectItem>
-              <SelectItem value="COMPLETED">COMPLETED</SelectItem>
               <SelectItem value="CANCELLED">CANCELLED</SelectItem>
-              <SelectItem value="EXPIRED">EXPIRED</SelectItem>
             </SelectContent>
           </Select>
         </div>

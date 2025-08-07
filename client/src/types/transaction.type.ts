@@ -1,4 +1,10 @@
-export type TransactionStatus = "PENDING"| "WAITING_PAYMENT"| "PAID"| "COMPLETED"| "CANCELLED"| "EXPIRED";
+export type TransactionStatus =
+  | "PENDING"
+  | "WAITING_PAYMENT"
+  | "PAID"
+  | "COMPLETED"
+  | "CANCELLED"
+  | "EXPIRED";
 
 export type Transaction = {
   id: number;
