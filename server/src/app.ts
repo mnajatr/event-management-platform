@@ -57,7 +57,7 @@ class App {
     this.app.use("/api/organizers", organizerRouter);
     this.app.use("/api/statistics", statisticRouter);
     this.app.use("/api/organizers", attendeeRoutes);
-    this.app.use("/api/organizers", transactionRoutes);
+    // this.app.use("/api/organizers", transactionRoutes);
 
     // Handle 404 - Must be AFTER all routes
     this.app.use(notFoundMiddleware);
