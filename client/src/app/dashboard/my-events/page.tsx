@@ -7,7 +7,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react"; // Import useState
 import { toast } from "sonner";
 
-import { getMyEvents, deleteEvent } from "@/lib/api/events"; // Import deleteEvent
+import { getMyEvents, deleteEvent } from "@/lib/api/events"; // Import nt
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -159,7 +159,7 @@ export default function MyEventsPage() {
             <AlertDialogTitle>Apakah Anda Yakin?</AlertDialogTitle>
             <AlertDialogDescription>
               Aksi ini tidak dapat dibatalkan. Ini akan menghapus event
-              <span className="font-bold">"{selectedEvent?.name}"</span>
+              <span className="font-bold">{selectedEvent?.name}</span>
               secara permanen.
             </AlertDialogDescription>
           </AlertDialogHeader>
