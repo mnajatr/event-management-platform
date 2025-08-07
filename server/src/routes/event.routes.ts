@@ -1,22 +1,24 @@
 import { Router } from "express";
 import { EventController } from "../controllers/event.controller";
 import { authMiddleware, roleMiddleware } from "../middlewares/auth.middleware";
-import { UserRole } from "../generated/prisma";
 
 const eventRouter = Router();
 const eventController = new EventController();
-const organizerOnly = [authMiddleware, roleMiddleware([UserRole.ORGANIZER])];
 
-// Rute GET /api/events/my-events (harus diletakkan SEBELUM /:id)
-eventRouter.get("/my-events", organizerOnly, eventController.getMyEvents);
+// POST /api/events -> Membuat event baru
+eventRouter.post("/", eventController.createEvent);
 
-// Rute GET publik
+// GET /api/events -> Mendapatkan semua event (dengan filter)
 eventRouter.get("/", eventController.getAllEvents);
-eventRouter.get("/:id", eventController.getEventById);
 
-// Rute yang diproteksi
-eventRouter.post("/", organizerOnly, eventController.createEvent);
-eventRouter.put("/:id", organizerOnly, eventController.updateEvent);
-eventRouter.delete("/:id", organizerOnly, eventController.deleteEvent);
+eventRouter.get(
+  "/my",
+  authMiddleware,
+  roleMiddleware(["ORGANIZER"]),
+  eventController.getMyEvents
+);
+
+// GET /api/events/:id -> Mendapatkan detail satu event
+eventRouter.get("/:id", eventController.getEventById);
 
 export default eventRouter;
