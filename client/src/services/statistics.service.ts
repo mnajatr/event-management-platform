@@ -12,17 +12,23 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-export const getDailyStats = async () => {
-  const res = await API.get("/statistics/daily");
+export const getDailyStats = async (eventId?: number) => {
+  const res = await API.get("/statistics/daily", {
+    params: eventId ? { eventId } : {},
+  });
   return res.data.data;
 };
 
-export const getMonthlyStats = async () => {
-  const res = await API.get("/statistics/monthly");
+export const getMonthlyStats = async (eventId?: number) => {
+  const res = await API.get("/statistics/monthly", {
+    params: eventId ? { eventId } : {},
+  });
   return res.data.data;
 };
 
-export const getYearlyStats = async () => {
-  const res = await API.get("/statistics/yearly");
+export const getYearlyStats = async (eventId?: number) => {
+  const res = await API.get("/statistics/yearly", {
+    params: eventId ? { eventId } : {},
+  });
   return res.data.data;
 };

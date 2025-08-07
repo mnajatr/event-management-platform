@@ -21,5 +21,4 @@ eventRouter.get(
 // GET /api/events/:id -> Mendapatkan detail satu event
 eventRouter.get("/:id", eventController.getEventById);
 
-
 export default eventRouter;

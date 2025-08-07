@@ -10,7 +10,9 @@ export class StatisticController {
       const organizerId = req.user?.id;
       if (!organizerId) return next(new AppError("Unauthorized", 401));
 
-      const daily = await statisticService.getDailyStats(organizerId);
+      const eventId = req.query.eventId ? Number(req.query.eventId) : undefined;
+
+      const daily = await statisticService.getDailyStats(organizerId, eventId);
       return res.status(200).json({ message: "Daily stats", data: daily });
     } catch (error) {
       next(error);
@@ -22,7 +24,9 @@ export class StatisticController {
       const organizerId = req.user?.id;
       if (!organizerId) return next(new AppError("Unauthorized", 401));
 
-      const monthly = await statisticService.getMonthlyStats(organizerId);
+      const eventId = req.query.eventId ? Number(req.query.eventId) : undefined;
+
+      const monthly = await statisticService.getMonthlyStats(organizerId, eventId);
       return res.status(200).json({ message: "Monthly stats", data: monthly });
     } catch (error) {
       next(error);
@@ -34,7 +38,9 @@ export class StatisticController {
       const organizerId = req.user?.id;
       if (!organizerId) return next(new AppError("Unauthorized", 401));
 
-      const yearly = await statisticService.getYearlyStats(organizerId);
+      const eventId = req.query.eventId ? Number(req.query.eventId) : undefined;
+
+      const yearly = await statisticService.getYearlyStats(organizerId, eventId);
       return res.status(200).json({ message: "Yearly stats", data: yearly });
     } catch (error) {
       next(error);

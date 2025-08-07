@@ -50,4 +50,27 @@ export class OrganizerController {
       next(error);
     }
   }
+
+  async getMyEvents(req: Request, res: Response, next: NextFunction) {
+  try {
+    const organizerId = req.user?.id;
+    if (!organizerId) return next(new AppError("Unauthorized", 401));
+
+    const events = await prisma.event.findMany({
+      where: { organizerId },
+      select: {
+        id: true,
+        name: true,
+        startDate: true,
+        endDate: true,
+        location: true,
+      },
+    });
+
+    return res.status(200).json({ message: "My Events", data: events });
+  } catch (error) {
+    next(error);
+  }
+}
+
 }

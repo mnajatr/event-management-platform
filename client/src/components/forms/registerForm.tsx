@@ -56,8 +56,8 @@ export default function RegisterForm() {
 
   const roleDescription =
     role === "CUSTOMER"
-      ? "As a participant, enjoy access to events, exclusive deals, and secure payments."
-      : "As an event organizer, you have robust capabilities to manage events, transactions, and gather feedback from participants.";
+      ? "As a customer, enjoy access to events, exclusive deals, and secure payments."
+      : "As an event organizer, you have robust capabilities to manage events, transactions, and gather feedback from customers.";
 
   return (
     <div className="w-full max-w-md space-y-6">
@@ -74,14 +74,14 @@ export default function RegisterForm() {
         className="w-full"
       >
         <TabsList className="grid grid-cols-2 w-full mb-4">
-          <TabsTrigger value="CUSTOMER">Participants</TabsTrigger>
+          <TabsTrigger value="CUSTOMER">Customers</TabsTrigger>
           <TabsTrigger value="ORGANIZER">Organizers</TabsTrigger>
         </TabsList>
       </Tabs>
 
       <div className="space-y-1">
         <h2 className="text-2xl font-semibold">
-          {role === "CUSTOMER" ? "Participants" : "Organizers"}
+          {role === "CUSTOMER" ? "Customers" : "Organizers"}
         </h2>
         <p className="text-sm text-muted-foreground">{roleDescription}</p>
       </div>
