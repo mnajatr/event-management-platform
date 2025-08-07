@@ -171,7 +171,7 @@ export default function ProfilePage() {
               className="bg-black text-white px-4 py-2 text-sm"
               onClick={() => router.push('/profile/change-password')}
             >
-              Change Password
+              Reset Password
             </Button>
           </div>
         </CardContent>

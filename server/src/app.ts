@@ -8,11 +8,6 @@ import { errorMiddleware } from "./middlewares/error.middleware";
 import userRoutes from "./routes/user.routes";
 import logger from "./utils/logger";
 import voucherRouters from "./routes/voucher.routes";
-import organizerRouter from "./routes/organizer.route";
-import statisticRouter from "./routes/statistic.routes";
-import attendeeRoutes from "./routes/attendees.routes";
-import transactionRoutes from "./routes/transaction.routes";
-
 import path from "path";
 
 class App {
@@ -52,12 +47,9 @@ class App {
     this.app.use("/api/events", eventRoutes);
     this.app.use("/api/auth", authRoutes);
     this.app.use("/api/vouchers", voucherRouters);
-    this.app.use("/api/users", userRoutes);
-    this.app.use("/uploads", express.static("uploads"));
-    this.app.use("/api/organizers", organizerRouter);
-    this.app.use("/api/statistics", statisticRouter);
-    this.app.use("/api/organizers", attendeeRoutes);
-    this.app.use("/api/organizers", transactionRoutes);
+    this.app.use("/api/users", userRoutes); 
+    this.app.use('/uploads', express.static('uploads'));
+;
 
     // Handle 404 - Must be AFTER all routes
     this.app.use(notFoundMiddleware);
