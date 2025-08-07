@@ -48,7 +48,7 @@ export const createEvent = async (
 
 export const getMyEvents = async (): Promise<TEvent[]> => {
   try {
-    const response = await api.get<{ data: TEvent[] }>("/events/my-events");
+    const response = await api.get<{ data: TEvent[] }>("/events/my");
     return response.data.data;
   } catch (error) {
     console.error("Failed to fetch organizer's events:", error);
