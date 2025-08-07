@@ -4,7 +4,7 @@ import {
   TCreateEventPayload,
   TUpdateEventPayload,
 } from "../validators/createEvent.schema";
-
+import { AxiosError } from "axios";
 interface IGetEventsParams {
   category?: string;
   search?: string;
@@ -78,8 +78,15 @@ export const updateEvent = async ({
       data
     );
     return response.data.data;
-  } catch (error) {
-    console.error("Failed to update event:", data);
-    throw new Error("Gagal membuat event.");
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      const message =
+        error.response?.data?.message || error.message || "Gagal update event.";
+      console.error("Failed to update event:", message);
+      throw new Error(message);
+    } else {
+      console.error("Unknown error", error);
+      throw new Error("Gagal update event.");
+    }
   }
 };
