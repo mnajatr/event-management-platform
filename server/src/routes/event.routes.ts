@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { EventController } from "../controllers/event.controller";
+import { EventController} from "../controllers/event.controller";
 import { authMiddleware,requireOrganizer, roleMiddleware } from "../middlewares/auth.middleware";
 
 const eventRouter = Router();
@@ -20,6 +20,20 @@ eventRouter.get(
   authMiddleware,
   roleMiddleware(["ORGANIZER"]),
   eventController.getMyEvents
+);
+
+eventRouter.put(
+  "/:id",
+  authMiddleware,
+  requireOrganizer,
+  eventController.updateEvent.bind(eventController)
+);
+
+eventRouter.delete(
+  "/:id",
+  authMiddleware,
+  requireOrganizer,
+  eventController.deleteEvent.bind(eventController)
 );
 
 // GET /api/events/:id -> Mendapatkan detail satu event
