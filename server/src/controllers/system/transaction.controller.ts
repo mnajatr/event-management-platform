@@ -1,3 +1,4 @@
+// controllers/system/transaction.controller.ts
 import { Request, Response } from "express";
 import prisma from "../../prisma";
 import { z } from "zod";
@@ -7,12 +8,7 @@ export const updateTransactionStatusBySystem = async (req: Request, res: Respons
   const { transactionId } = req.params;
 
   const bodySchema = z.object({
-    status: z.enum([
-      "WAITING_PAYMENT",
-      "COMPLETED",
-      "EXPIRED",
-      "CANCELLED",
-    ]),
+    status: z.enum(["WAITING_PAYMENT", "EXPIRED", "COMPLETED"]),
   });
 
   try {
@@ -28,7 +24,7 @@ export const updateTransactionStatusBySystem = async (req: Request, res: Respons
 
     const updated = await prisma.transaction.update({
       where: { id: Number(transactionId) },
-      data: { status: status as TransactionStatus },
+      data: { status },
     });
 
     return res.json({
@@ -36,7 +32,7 @@ export const updateTransactionStatusBySystem = async (req: Request, res: Respons
       data: updated,
     });
   } catch (err) {
-    console.error("System update error:", err);
+    console.error("System transaction update error:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
