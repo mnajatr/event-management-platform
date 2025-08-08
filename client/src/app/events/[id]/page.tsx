@@ -7,6 +7,7 @@ import { InfoBlock } from "@/components/events/details/InfoBlock";
 import { Calendar, MapPin, UserCircle, Ticket } from "lucide-react";
 import dayjs from "dayjs";
 import { useState, useEffect } from "react";
+import { TicketPurchaseForm } from "@/components/events/TicketPurchaseForm";
 
 export default function EventDetailPage() {
   const [isClient, setIsClient] = useState(false);
@@ -43,69 +44,81 @@ export default function EventDetailPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="bg-white rounded-lg shadow-xl overflow-hidden">
-        <img
-          src={imageUrl}
-          alt={event.name}
-          className="w-full h-64 md:h-96 object-cover"
-        />
-
-        <div className="p-6 md:p-8">
-          <h1 className="text-3xl md:text-5xl font-extrabold mb-2">
-            {event.name}
-          </h1>
-
-          {/* --- PERBAIKAN PADA HARGA --- */}
-          <p className="text-xl md:text-2xl font-bold text-blue-600 mb-6">
-            {isClient ? (
-              event.basePrice > 0 ? (
-                `Rp ${event.basePrice.toLocaleString("id-ID")}`
-              ) : (
-                "Gratis"
-              )
-            ) : (
-              <span className="animate-pulse bg-gray-200 rounded-md w-32 h-8 inline-block"></span> // Placeholder
-            )}
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <InfoBlock icon={Calendar} title="Tanggal & Waktu">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Kolom Kiri: Detail Event */}
+        <div className="lg:col-span-2 bg-white rounded-lg shadow-xl overflow-hidden">
+          <img
+            src={imageUrl}
+            alt={event.name}
+            className="w-full h-64 md:h-96 object-cover"
+          />
+          <div className="p-6 md:p-8">
+            <h1 className="text-3xl md:text-5xl font-extrabold mb-2">
+              {event.name}
+            </h1>
+            <p className="text-xl md:text-2xl font-bold text-blue-600 mb-6">
               {isClient ? (
-                <>
-                  <p>{dayjs(event.startDate).format("dddd, D MMMM YYYY")}</p>
-                  <p>
-                    {dayjs(event.startDate).format("HH:mm")} -{" "}
-                    {dayjs(event.endDate).format("HH:mm")} WIB
-                  </p>
-                </>
+                event.basePrice > 0 ? (
+                  `Rp ${event.basePrice.toLocaleString("id-ID")}`
+                ) : (
+                  "Gratis"
+                )
               ) : (
-                <div className="space-y-2">
-                  <div className="animate-pulse bg-gray-200 rounded-md w-48 h-5"></div>
-                  <div className="animate-pulse bg-gray-200 rounded-md w-32 h-5"></div>
-                </div> // Placeholder
+                <span className="animate-pulse bg-gray-200 rounded-md w-32 h-8 inline-block"></span>
               )}
-            </InfoBlock>
-
-            {/* ... InfoBlock lain tidak perlu diubah ... */}
-            <InfoBlock icon={MapPin} title="Lokasi">
-              <p>{event.location}</p>
-            </InfoBlock>
-            <InfoBlock icon={UserCircle} title="Diselenggarakan oleh">
-              <p>{event.organizer.fullName}</p>
-            </InfoBlock>
-            <InfoBlock icon={Ticket} title="Tiket Tersedia">
-              <p>{event.availableSeats} kursi</p>
-            </InfoBlock>
-          </div>
-
-          <hr className="my-8" />
-
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Deskripsi Event</h2>
-            <p className="text-gray-700 whitespace-pre-wrap">
-              {event.description}
             </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <InfoBlock icon={Calendar} title="Tanggal & Waktu">
+                {isClient ? (
+                  <>
+                    <p>{dayjs(event.startDate).format("dddd, D MMMM YYYY")}</p>
+                    <p>
+                      {dayjs(event.startDate).format("HH:mm")} -{" "}
+                      {dayjs(event.endDate).format("HH:mm")} WIB
+                    </p>
+                  </>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="animate-pulse bg-gray-200 rounded-md w-48 h-5"></div>
+                    <div className="animate-pulse bg-gray-200 rounded-md w-32 h-5"></div>
+                  </div>
+                )}
+              </InfoBlock>
+              <InfoBlock icon={MapPin} title="Lokasi">
+                <p>{event.location}</p>
+              </InfoBlock>
+              <InfoBlock icon={UserCircle} title="Diselenggarakan oleh">
+                <p>{event.organizer.fullName}</p>
+              </InfoBlock>
+              <InfoBlock icon={Ticket} title="Tiket Tersedia">
+                <p>{event.availableSeats} kursi</p>
+              </InfoBlock>
+            </div>
+
+            <hr className="my-8" />
+
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Deskripsi Event</h2>
+              <p className="text-gray-700 whitespace-pre-wrap">
+                {event.description}
+              </p>
+            </div>
           </div>
+        </div>
+
+        {/* Kolom Kanan: Form Pembelian Tiket */}
+        <div className="lg:col-span-1">
+          {event && event.ticketsTypes.length > 0 ? (
+            <TicketPurchaseForm
+              eventId={event.id}
+              ticketTypes={event.ticketsTypes}
+            />
+          ) : (
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 text-center">
+              Tiket untuk event ini belum tersedia.
+            </div>
+          )}
         </div>
       </div>
     </div>

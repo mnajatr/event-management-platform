@@ -12,3 +12,16 @@ export type Transaction = {
     profilePicture: string;
   };
 };
+
+export type TTransaction = {
+  id: number;
+  customerId: number;
+  eventId: number;
+  ticketTypeId: number;
+  quantity: number;
+  baseAmount: number;
+  finalAmount: number;
+  status: string;
+  paymentDeadline: string | null;
+  createdAt: string;
+};
