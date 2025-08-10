@@ -29,7 +29,11 @@ export class EventController {
       });
     } catch (error) {
       console.error("EventController error:", error);
-      res.status(500).json({ message: error instanceof Error ? error.message : String(error) });
+      res
+        .status(500)
+        .json({
+          message: error instanceof Error ? error.message : String(error),
+        });
     }
   }
 
@@ -43,7 +47,11 @@ export class EventController {
       });
     } catch (error) {
       console.error("EventController error:", error);
-      res.status(500).json({ message: error instanceof Error ? error.message : String(error) });
+      res
+        .status(500)
+        .json({
+          message: error instanceof Error ? error.message : String(error),
+        });
     }
   }
 
@@ -58,6 +66,8 @@ export class EventController {
       if (!event) {
         throw new AppError("Event not found", 404);
       }
+
+      console.log("Data event yang dikirim ke frontend:", event);
 
       res.status(200).json({
         message: "Event fetched successfully! 🎊",
