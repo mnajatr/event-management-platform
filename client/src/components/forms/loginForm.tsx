@@ -28,9 +28,9 @@ export default function LoginForm() {
       const res = await api.post("/auth/login", data);
       const { token, user } = res.data.data;
 
-      setSession(token, user); // simpan token
+      setSession(token, user); 
       toast.success("Login success!");
-      router.push("/"); // redirect
+      router.push("/"); 
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       toast.error(err.response?.data?.message || "Login failed");

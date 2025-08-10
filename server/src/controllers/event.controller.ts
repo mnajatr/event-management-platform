@@ -124,7 +124,6 @@ export class EventController {
       if (!organizerId) throw new AppError("Unauthorized", 401);
       if (isNaN(eventId)) throw new AppError("Invalid event ID", 400);
 
-      // Validasi kalau event ini memang milik organizer yang sedang login
       const event = await prisma.event.findUnique({
         where: { id: eventId },
       });

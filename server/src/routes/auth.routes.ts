@@ -5,30 +5,26 @@ import { validate } from "../middlewares/validate.middleware";
 import {
   registerSchema,
   loginSchema,
-  passwordResetSchema,
-  passwordUpdateSchema
+  passwordUpdateSchema,
 } from "../validators/auth.validator";
+import { forgotPassword, resetPassword } from "../controllers/password.controller";
 
 const router = express.Router();
 const authController = new AuthController();
 
-// Public routes
+// ===== Public Routes =====
 router.post("/register", validate(registerSchema), authController.register);
 router.post("/login", validate(loginSchema), authController.login);
-router.post(
-  "/forgot-password",
-  validate(passwordResetSchema),
-  authController.requestPasswordReset
-);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
+// ===== Protected Routes =====
 router.patch(
   "/update-password",
   authMiddleware,
   validate(passwordUpdateSchema),
   authController.updatePassword
 );
-
-// Protected routes
 router.get("/profile", authMiddleware, authController.getProfile);
 
 export default router;

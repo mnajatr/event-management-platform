@@ -7,7 +7,7 @@ import { isAuthenticated, getUserRole, isTokenExpired } from "@/lib/auth";
 
 interface ProtectedPageProps {
 children: React.ReactNode;
-allowedRoles?: string[]; // Misalnya: ['CUSTOMER'] atau ['ORGANIZER']
+allowedRoles?: string[];
 }
 
 export default function ProtectedPage({ children, allowedRoles }: ProtectedPageProps) {
@@ -23,7 +23,7 @@ return;
 
 if (isTokenExpired()) {  
   toast.error("Session expired, please login again");  
-  localStorage.clear();  
+  localStorage.clear();   
   router.replace("/auth/login");  
   return;  
 }  

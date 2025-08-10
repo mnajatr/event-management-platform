@@ -13,9 +13,8 @@ export class TransactionService {
   ) {
     const { eventId, ticketTypeId, quantity } = data;
 
-    // Gunakan Prisma Transaction untuk operasi atomik
+
     return await prisma.$transaction(async (tx) => {
-      // 1. Ambil data event dan tiket, lalu kunci record event untuk update
       const event = await tx.event.findFirst({
         where: { id: eventId },
       });
@@ -33,16 +32,14 @@ export class TransactionService {
 
       // 2. Hitung total harga dan batas waktu pembayaran
       const baseAmount = ticketType.price * quantity;
-      const finalAmount = baseAmount; // Untuk saat ini, tanpa diskon
+      const finalAmount = baseAmount; 
       const paymentDeadline = addHours(new Date(), 2); // Batas waktu 2 jam dari sekarang
 
-      // 3. Kurangi jumlah kursi yang tersedia di event
       await tx.event.update({
         where: { id: eventId },
         data: { availableSeats: { decrement: quantity } },
       });
 
-      // 4. Buat record transaksi baru
       const newTransaction = await tx.transaction.create({
         data: {
           customerId,
