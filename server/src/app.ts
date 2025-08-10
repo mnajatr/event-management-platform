@@ -62,8 +62,6 @@ class App {
     this.app.use("/api/transactions", transactionRoutes);
     this.app.use("/api/organizers", organizerTransactionRoutes);
     this.app.use("/api/system", systemTransactionRoute);
-
-
     // Handle 404 - Must be AFTER all routes
     this.app.use(notFoundMiddleware);
   }
