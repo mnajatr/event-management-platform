@@ -27,7 +27,7 @@ export default function EventDetailPage() {
   } = useQuery({
     queryKey: ["event", eventId],
     queryFn: () => getEventById(eventId!),
-    enabled: eventId !== null,
+    enabled: !!eventId,
   });
 
   if (isLoading)
@@ -109,10 +109,10 @@ export default function EventDetailPage() {
 
         {/* Kolom Kanan: Form Pembelian Tiket */}
         <div className="lg:col-span-1">
-          {event && event.ticketsTypes.length > 0 ? (
+          {event.ticketTypes && event.ticketTypes.length > 0 ? (
             <TicketPurchaseForm
               eventId={event.id}
-              ticketTypes={event.ticketsTypes}
+              ticketTypes={event.ticketTypes}
             />
           ) : (
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 text-center">

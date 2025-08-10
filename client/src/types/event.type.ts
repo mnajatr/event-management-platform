@@ -17,11 +17,11 @@ export type TEvent = {
   description: string;
   category: (typeof eventCategories)[number];
   location: string;
-  startDate: string; // ISO date string
-  endDate: string; // ISO date string
+  startDate: string;
+  endDate: string;
   basePrice: number;
   availableSeats: number;
-  imageUrl: string | null; // URL to the event image, can be null if no image is provided
+  imageUrl: string | null;
   organizer: TOrganizer;
   status: TEventStatus;
 };
@@ -33,8 +33,9 @@ export type TTicketType = {
   quantity: number;
 };
 
+// Pastikan TEventDetail memiliki `ticketTypes`
 export type TEventDetail = TEvent & {
-  ticketsTypes: TTicketType[];
+  ticketTypes: TTicketType[];
   organizer: {
     id: number;
     fullName: string;

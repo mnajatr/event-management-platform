@@ -1,6 +1,7 @@
 import prisma from "../prisma";
 import { AppError } from "../errors/app.error";
 import { addHours } from "date-fns";
+import { TransactionStatus } from "../generated/prisma";
 
 export class TransactionService {
   async createTransaction(
@@ -54,6 +55,59 @@ export class TransactionService {
       });
 
       return newTransaction;
+    });
+  }
+
+  async findTransactionById(transactionId: number, customerId: number) {
+    const transaction = await prisma.transaction.findUnique({
+      where: { id: transactionId },
+      include: {
+        event: {
+          // Sertakan detail event untuk ditampilkan di frontend
+          select: { name: true, location: true, startDate: true },
+        },
+      },
+    });
+
+    if (!transaction) {
+      throw new AppError("Transaksi tidak ditemukan.", 404);
+    }
+    // Verifikasi kepemilikan
+    if (transaction.customerId !== customerId) {
+    }
+
+    return transaction;
+  }
+
+  async addPaymentProof(
+    transactionId: number,
+    customerId: number,
+    paymentProofUrl: string
+  ) {
+    // Pertama, verifikasi kepemilikan transaksi
+    const transaction = await prisma.transaction.findUnique({
+      where: { id: transactionId },
+    });
+    if (!transaction || transaction.customerId !== customerId) {
+      throw new AppError("Anda tidak memiliki akses ke transaksi ini.", 403);
+    }
+
+    // Pastikan transaksi masih dalam status menunggu pembayaran
+    if (transaction.status !== "WAITING_PAYMENT") {
+      throw new AppError(
+        "Tidak dapat mengunggah bukti untuk transaksi ini.",
+        400
+      );
+    }
+
+    // Update transaksi
+    return await prisma.transaction.update({
+      where: { id: transactionId },
+      data: {
+        paymentProof: paymentProofUrl,
+        status: TransactionStatus.PAID,
+        confirmationDeadline: addHours(new Date(), 72), // Batas konfirmasi 3 hari
+      },
     });
   }
 }
